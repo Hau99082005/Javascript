@@ -1,8 +1,8 @@
 export const headerData = [
-    {title: "Trang chủ", href: "/"},
-    {title: "Về chúng tôi", href: "/about"},
+    {title: "Khuyến mãi", href: "/"},
+    {title: "Thuê sự kiện", href: "/"},
+    {title: "Tất cả các giải trí", href: "/"},
     {title: "Giới thiệu", href: "/"},
-    {title: "Liên Hệ", href: "/contact"},
 ]
 
 export const categories = [
