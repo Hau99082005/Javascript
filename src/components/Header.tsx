@@ -3,8 +3,8 @@ import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, Search, Ticket, User, Wheat, MapPin } from "lucide-react";
-import { categories, headerData } from "@/constants";
-import { MDBDropdown, MDBDropdownItem, MDBDropdownMenu, MDBDropdownToggle } from "mdb-react-ui-kit";
+import { categories, headerData, localtion } from "@/constants";
+import { MDBDropdown, MDBDropdownItem, MDBDropdownMenu, MDBDropdownToggle, MDBNavbarItem } from "mdb-react-ui-kit";
 import { toast } from "sonner";
 import Container from "./Container";
 
@@ -67,10 +67,40 @@ export default function Header() {
       <Container className="w-full rounded-full">
       <section className="flex flex-col lg:flex-row justify-center lg:justify-between p-4 border-t-2">
     <div className="flex flex-col lg:flex-row gap-4">
-    <span className="group flex items-center text-[18px] font-lato cursor-pointer transition-all hover:text-amber-600 gap-2 duration-200">
+   <MDBNavbarItem style={{display: "flex"}}>
+    <MDBDropdown style={{display: "flex"}} >
+    <MDBDropdownToggle className="group flex bg-[#1d1d1d1d] items-center text-[18px] font-lato cursor-pointer transition-all hover:text-amber-600 gap-2 duration-200"
+    style={{display: "flex"}}>
       <MapPin width={25} height={25} className="transition-transform group-hover:scale-110" />
       Chọn rạp
-    </span>
+    </MDBDropdownToggle>
+    <MDBDropdownMenu className="p-12 w-full md:w-[1200px] rounded-full" style={{background: "#1d1d1d", color: "#ffffff", textDecoration: "none"}}>
+     <div className="row">
+      <div className="col-12 col-md-4">
+      {localtion.slice(0, Math.ceil(localtion.length / 3)).map((item, index) => (
+        <MDBDropdownItem link key={index}>
+          <Link href={item.href} className="text-white text-decoration-none flex gap-2 font-semibold" style={{fontFamily: "Lato", fontSize: "18px", gap: "10px", display: "flex", marginTop: "20px"}}>{item.title}</Link>
+        </MDBDropdownItem>
+      ))}
+    </div>
+    <div className="col-12 col-md-4">
+      {localtion.slice(Math.ceil(localtion.length / 3), Math.ceil((2 * localtion.length) / 3)).map((item, index) => (
+        <MDBDropdownItem link key={index}>
+          <Link href={item.href} className="text-white text-decoration-none flex gap-2 font-semibold" style={{fontFamily: "Lato", fontSize: "18px", gap: "10px", display: "flex", marginTop: "20px"}}>{item.title}</Link>
+        </MDBDropdownItem>
+      ))}
+    </div>
+    <div className="col-12 col-md-4">
+      {localtion.slice(Math.ceil((2 * localtion.length) / 3)).map((item, index) => (
+        <MDBDropdownItem link key={index}>
+         <Link href={item.href} className="text-white text-decoration-none flex gap-2 font-semibold" style={{fontFamily: "Lato", fontSize: "18px", gap: "10px", display: "flex", marginTop: "20px"}}>{item.title}</Link>
+        </MDBDropdownItem>
+      ))}
+    </div>
+   </div>
+   </MDBDropdownMenu>
+    </MDBDropdown>
+   </MDBNavbarItem>
     <span className="group flex items-center text-[18px] font-lato cursor-pointer transition-all hover:text-amber-600 gap-2 duration-200">
       <MapPin width={25} height={25} className="transition-transform group-hover:scale-110" />
       Lịch Chiếu
@@ -79,7 +109,7 @@ export default function Header() {
     <div className="flex flex-wrap gap-4 md:gap-6 lg:gap-8 items-center">
       {headerData.map((item, index) => (
      <Link href={item.href} key={index}
-      className="font-semibold text-white no-underline text-[16px] md:text-[18px] lg:text-[20px] duration-200 transition-all  duration-200 hover:text-yellow-400"
+      className="font-semibold text-white no-underline text-[16px] md:text-[18px] lg:text-[20px] transition-all  duration-200 hover:text-yellow-400"
       style={{ fontFamily: 'Lato', textDecoration: 'none' }}
       >
       {item?.title}

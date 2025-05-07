@@ -12,3 +12,15 @@ export const categories = [
     {title: "Áo Len & Áo Dệt Kim", href: "/", description: ""},
     {title: "Quần", href: "/", description: ""},
 ]
+
+export const localtion = [
+    {title: "Cinestar Quốc Thanh (TP.HCM)", href: "/"},
+    {title: "Cinestar Sinh Viên (Bình Dương)", href: "/"},
+    {title: "Cinestar Lâm Đồng(Đức Trọng)", href: "/"},
+    {title: "Cinestar Satra Quận 6(TP.HCM)", href: "/"},
+    {title: "Cinestar Huế(TP.HUẾ)", href: "/"},
+    {title: "Cinestar Mỹ Tho (Tiền Giang)", href: "/"},
+    {title: "Cinestar Hai Bà Trưng(TP.HCM)", href: "/"},
+    {title: "Cinestar Đà Lạt(Đà Lạt)", href: "/"},
+    {title: "Cinestar Kiên Giang(Rạch sỏi", href: "/"},
+]
