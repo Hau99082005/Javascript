@@ -67,19 +67,20 @@ export default function Header() {
       <Container className="w-full rounded-full">
       <section className="flex flex-col lg:flex-row justify-center lg:justify-between p-4 border-t-2">
     <div className="flex flex-col lg:flex-row gap-4">
+      
    <MDBNavbarItem style={{display: "flex"}}>
     <MDBDropdown style={{display: "flex"}} >
     <MDBDropdownToggle className="group flex bg-[#1d1d1d1d] items-center text-[18px] font-lato cursor-pointer transition-all hover:text-amber-600 gap-2 duration-200"
-    style={{display: "flex"}}>
+    style={{display: "flex", backgroundColor: "transparent", border: "none"}}>
       <MapPin width={25} height={25} className="transition-transform group-hover:scale-110" />
       Chọn rạp
     </MDBDropdownToggle>
-    <MDBDropdownMenu className="p-12 w-full md:w-[1200px] rounded-full" style={{background: "#1d1d1d", color: "#ffffff", textDecoration: "none"}}>
+    <MDBDropdownMenu className="p-12 w-full md:w-[1200px] rounded-full" style={{ background: "#1d1d1d"}}>
      <div className="row">
-      <div className="col-12 col-md-4">
+      <div className="col-12 col-md-4" style={{background: "transparent"}}>
       {localtion.slice(0, Math.ceil(localtion.length / 3)).map((item, index) => (
-        <MDBDropdownItem link key={index}>
-          <Link href={item.href} className="text-white text-decoration-none flex gap-2 font-semibold" style={{fontFamily: "Lato", fontSize: "18px", gap: "10px", display: "flex", marginTop: "20px"}}>{item.title}</Link>
+        <MDBDropdownItem link key={index} style={{background:"transparent"}}>
+          <Link href={item.href} className=" text-white text-decoration-none flex gap-2 font-semibold" style={{fontFamily: "Lato", background: "transparent", fontSize: "18px", gap: "10px", display: "flex", marginTop: "20px"}}>{item.title}</Link>
         </MDBDropdownItem>
       ))}
     </div>
@@ -101,10 +102,13 @@ export default function Header() {
    </MDBDropdownMenu>
     </MDBDropdown>
    </MDBNavbarItem>
-    <span className="group flex items-center text-[18px] font-lato cursor-pointer transition-all hover:text-amber-600 gap-2 duration-200">
+  <MDBDropdown>
+  <MDBDropdownToggle caret={false} className="group flex bg-[#1d1d1d1d] items-center text-[18px] font-lato cursor-pointer transition-all hover:text-amber-600 gap-2 duration-200"
+    style={{display: "flex", backgroundColor: "transparent", border: "none"}}>
       <MapPin width={25} height={25} className="transition-transform group-hover:scale-110" />
       Lịch Chiếu
-    </span>
+    </MDBDropdownToggle>
+  </MDBDropdown>
     </div>
     <div className="flex flex-wrap gap-4 md:gap-6 lg:gap-8 items-center">
       {headerData.map((item, index) => (
