@@ -1,6 +1,8 @@
 'use client'
 
 import Banner from "@/components/Banner";
+import Card from "@/components/Card";
+import Tickers from "@/components/Tickers";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect } from "react";
 import { toast } from "sonner";
@@ -20,6 +22,8 @@ export default function Home() {
     <div className="w-full rounded-full">
       <Toaster richColors position="top-center"/>
       <Banner />
+      <Tickers/>
+      <Card/>
     </div>
   );
 }
