@@ -2,6 +2,9 @@
 
 import Banner from "@/components/Banner";
 import Card from "@/components/Card";
+import Members from "@/components/Members";
+import Movie from "@/components/Movie";
+import Promotion from "@/components/Promotion";
 import Tickers from "@/components/Tickers";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect } from "react";
@@ -24,6 +27,9 @@ export default function Home() {
       <Banner />
       <Tickers/>
       <Card/>
+      <Movie/>
+      <Promotion/>
+      <Members/>
     </div>
   );
 }

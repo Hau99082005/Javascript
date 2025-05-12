@@ -33,3 +33,17 @@ export const movie = [
   {title: "Ký ức Máu", image: "/image/ky-uc-mau.webp", date: "10/5/2025", badge: "T16"},
   {title: "Phim Điện Ảnh Doraemon: NOBITA VÀ CUỘC PHIÊU LƯU THỜI TIỀN SỬ", image: "/image/doraemon.webp", date: "23/5/2025",badge: "P"},
 ]
+
+export const movie2 = [
+    {title: "NHIỆM VỤ: BẤT KHẢ THI - NGHIỆP BÁO CUỐI CÙNG", image: "/image/MI8_Poster_470x700.webp",date: "30/5/2025",badge: "T16"},
+    {title: "DƯỚI ĐÁY HỒ", image: "/image/duoidayho.webp", date: "6/6/2025", badge: "T18"},
+    {title: "BÍ KÍP LUYỆN RỒNG",image: "/image/bi-kip-luyen-rong_1.webp",date: "13/6/2025", badge: "K"},
+    {title: "ELIO CẬU BÉ ĐẾN TỪ TRÁI ĐẤT", image: "/image/elio.webp",date: "13/6/2025", badge: "P"},
+    {title: "Phim Điện Ảnh Doraemon: NOBITA VÀ CUỘC PHIÊU LƯU THỜI TIỀN SỬ", image: "/image/doraemon.webp", date: "23/5/2025",badge: "P"},
+    {title: "YADANG: BA MẶT LẬT KÈO (T18)",image: "/image/yadang-ba-mat-lat-keo.webp",date: "16/5/2025",badge: "T18"},
+    {title: "TỘI ĐỒ",image: "/image/sinner.webp",date: "21/5/2025",badge: "T18"},
+    {title: "UNTIL DAWN: BÍ MẬT KINH HOÀNG(T18)", image: "/image/until-dawn-poster.webp",date: "16/5/2025",badge: "T18"},
+    {title: "ĐIỆP QUỶ TÂN NƯƠNG(T16)", image: "/image/diep-quy-tan-nuong.webp", date: "23/5/2025", badge: "T16"},
+    {title: "LILO & STITCH", image: "/image/lilo-stitch.webp", date: "23/5/2025",badge: "P"},
+    {title: "DẾ MÈN: CUỘC PHIÊU LƯU TỚI XÓM LẦY LỘI(LT)",image: "/image/de-men.webp",date: "30/5/2025", badge: "P"},
+]
