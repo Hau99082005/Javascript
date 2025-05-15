@@ -2,6 +2,8 @@
 
 import Banner from "@/components/Banner";
 import Card from "@/components/Card";
+import Contacts from "@/components/Contacts";
+import Entertaiments from "@/components/Entertaiments";
 import Members from "@/components/Members";
 import Movie from "@/components/Movie";
 import Promotion from "@/components/Promotion";
@@ -30,6 +32,8 @@ export default function Home() {
       <Movie/>
       <Promotion/>
       <Members/>
+      <Entertaiments/>
+      <Contacts/>
     </div>
   );
 }
