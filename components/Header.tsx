@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { FaBars, FaBell, FaSearch, FaShoppingCart, FaTimes, FaUser } from "react-icons/fa";
+import { FaBars, FaBell, FaSearch, FaShoppingCart, FaTimes } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -57,7 +57,6 @@ export default function Header() {
             <span className="text-sm">Giỏ hàng</span>
           </div>
           <div className="flex items-center gap-1 hover:text-red-600">
-            <FaUser className="text-xl" />
             <AuthButtons />
           </div>
           <div className="flex items-center gap-1 cursor-pointer hover:text-red-600">
@@ -79,7 +78,6 @@ export default function Header() {
               <span>Giỏ hàng</span>
             </div>
             <div className="flex items-center gap-2">
-              <FaUser />
               <AuthButtons />
             </div>
           </div>

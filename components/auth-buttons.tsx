@@ -34,16 +34,21 @@ export default function AuthButtons() {
             Tài Khoản
             </Link>
           </DropdownMenuItem>
+          {!!auth.customClaims?.admin && (
            <DropdownMenuItem asChild>
-            <Link href={'/admin'}>
+            <Link href={'/admin-dashboard'}>
             Admin
             </Link>
           </DropdownMenuItem>
+          )}
+          {!!auth.customClaims?.admin && (
            <DropdownMenuItem asChild>
             <Link href={'/account/my-favourites'}>
             Yêu Thích
             </Link>
           </DropdownMenuItem>
+          )}
+           
           <DropdownMenuItem onClick={async() =>
             {
               await auth.logout();
@@ -57,19 +62,20 @@ export default function AuthButtons() {
   }
 
   return (
-    <div className="flex flex-col gap-1 text-sm font-medium">
-      <Link
-        href="/login"
-        className="hover:underline text-black font-lato text-base"
-      >
-        Đăng nhập
-      </Link>
-      <Link
-        href="/register"
-        className="hover:underline text-black font-lato text-base"
-      >
-        Đăng ký
-      </Link>
-    </div>
+   <div className="flex flex-col gap-3 items-center">
+  <Link
+    href="/login"
+    className="w-[140px] h-[40px] flex items-center justify-center text-white font-lato text-base rounded-full bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-md"
+  >
+    Đăng nhập
+  </Link>
+  <Link
+    href="/register"
+    className="w-[140px] h-[40px] flex items-center justify-center text-white font-lato text-base rounded-full bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-md"
+  >
+    Đăng ký
+  </Link>
+</div>
+
   );
 }
