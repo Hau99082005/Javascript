@@ -6,8 +6,11 @@ import { PlusCircleIcon } from "lucide-react";
 import { z } from "zod";
 import { saveNewProperty } from "./actions";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+
 export default function NewPropertyForm() {
     const auth = useAuth();
+    const route = useRouter();
 
     const handleSubmit = async (data: z.infer<typeof bookDataSchema>) => {
         const token = await auth?.currentUser?.getIdToken();
@@ -25,6 +28,8 @@ export default function NewPropertyForm() {
         toast.success("Success!", {
             description: "Property created!",
         });
+
+        route.push("/admin-dashboard");
         console.log(token);
        console.log(data);
        console.log({response});

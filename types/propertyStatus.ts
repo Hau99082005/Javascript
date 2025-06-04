@@ -1,0 +1,1 @@
+export type BookStatus = "bản nháp" | "đang bán" | "hết hàng" | "ngừng kinh doanh";
