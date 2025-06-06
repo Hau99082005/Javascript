@@ -35,10 +35,19 @@ export default function NewPropertyForm() {
        console.log({response});
     }
     return(
-     <div>
-        <PropertyForm handleSubmit={handleSubmit} submitButtonLabel={<>
-            <PlusCircleIcon/> Create Property
-            </>}/>
-     </div>
+   <div className="bg-transparent">
+  <PropertyForm 
+    handleSubmit={handleSubmit}
+    submitButtonLabel={
+      <div
+        className="flex gap-2 items-center justify-center px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-200"
+      >
+        <PlusCircleIcon className="w-5 h-5" />
+        Create Property
+      </div>
+    }
+  />
+</div>
+
     );
 }

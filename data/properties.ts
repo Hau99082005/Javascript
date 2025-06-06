@@ -1,4 +1,5 @@
 import { firestore } from "@/firebase/server";
+import { Property } from "@/types/property";
 import { BookStatus} from "@/types/propertyStatus";
 import "server-only";
 
@@ -48,7 +49,7 @@ export const getBooks = async (options?: GetBooksOptions) => {
   const books = booksSnapshot.docs.map((doc) => ({
     id: doc.id,
     ...doc.data(),
-  }));
+  }as Property));
 
   return {
     data: books,

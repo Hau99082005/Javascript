@@ -30,20 +30,20 @@ export default function AuthButtons() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator/>
           <DropdownMenuItem asChild>
-            <Link href={'/account'}>
+            <Link href={'/account'} className="text-black text-decoration-none">
             Tài Khoản
             </Link>
           </DropdownMenuItem>
           {!!auth.customClaims?.admin && (
            <DropdownMenuItem asChild>
-            <Link href={'/admin-dashboard'}>
+            <Link href={'/admin-dashboard'} className="text-black text-decoration-none">
             Admin
             </Link>
           </DropdownMenuItem>
           )}
           {!!auth.customClaims?.admin && (
            <DropdownMenuItem asChild>
-            <Link href={'/account/my-favourites'}>
+            <Link href={'/account/my-favourites'} className="text-black text-decoration-none">
             Yêu Thích
             </Link>
           </DropdownMenuItem>
@@ -65,13 +65,13 @@ export default function AuthButtons() {
    <div className="flex flex-col gap-3 items-center">
   <Link
     href="/login"
-    className="w-[140px] h-[40px] flex items-center justify-center text-white font-lato text-base rounded-full bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-md"
+    className="text-decoration-none w-[140px] h-[40px] flex items-center justify-center text-white font-lato text-base rounded-full bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-md"
   >
     Đăng nhập
   </Link>
   <Link
     href="/register"
-    className="w-[140px] h-[40px] flex items-center justify-center text-white font-lato text-base rounded-full bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-md"
+    className="text-decoration-none w-[140px] h-[40px] flex items-center justify-center text-white font-lato text-base rounded-full bg-red-600 hover:bg-red-700 hover:scale-105 transition-all duration-300 shadow-md"
   >
     Đăng ký
   </Link>

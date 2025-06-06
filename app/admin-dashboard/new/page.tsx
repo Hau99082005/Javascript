@@ -12,8 +12,8 @@ export default function NewProperty() {
             label: "New Property",
         }
         ]}/>
-        <Card className="mt-5">
-          <CardHeader>
+        <Card className="mt-5 text-black">
+          <CardHeader className="text-black">
             <CardTitle className="text-3xl font-semibold">
                 New Property
             </CardTitle>
