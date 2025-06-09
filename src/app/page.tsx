@@ -1,6 +1,9 @@
 "use client";
 import Banner from "@/components/Banner";
+import BookRanking from "@/components/BookRanking";
 import Books from "@/components/Books";
+import { BrandHighlightList } from "@/components/BrandHighlight/BrandHighlightList";
+import { FlashSaleSection } from "@/components/FlashSale/FlashSaleSection";
 import Outstanding from "@/components/OutStanding";
 import ProductCard from "@/components/ProductCard";
 // import { GlobalContext } from "@/context/page";
@@ -11,9 +14,12 @@ export default function Home() {
   return (
     <div className="pt-[5px] w-full max-w-screen-xl mx-auto">
       <Banner />
+      <FlashSaleSection/>
       <Outstanding/>
       <ProductCard/>
       <Books/>
+      <BookRanking/>
+      <BrandHighlightList/>
     </div>
   );
 }
