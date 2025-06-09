@@ -8,6 +8,7 @@ export interface IProduct extends Document {
   date: Date;
   productcode: string;
   quantity: number;
+  actor: string;
   pages: number;
   description: string;
   category: string;
@@ -24,6 +25,7 @@ const productSchema = new Schema<IProduct>({
   date: { type: Date, required: true },
   productcode: { type: String, required: true },
   quantity: { type: Number, required: true },
+  actor: {type: String, required: true},
   pages: { type: Number },
   description: { type: String },
   category: { type: String },

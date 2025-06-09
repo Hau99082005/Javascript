@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
       date,
       productcode,
       quantity,
+      actor,
       pages,
       description,
       category,
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (
       !productName || !productImage || productPrice === undefined || productPriceOld === undefined ||
       !date || !productcode || quantity === undefined || pages === undefined ||
-      !description || !category || !subcategory
+      !description || !category || !subcategory || !actor
     ) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
@@ -38,6 +39,7 @@ export async function POST(request: NextRequest) {
       date,
       productcode,
       quantity,
+      actor,
       pages,
       description,
       category,
