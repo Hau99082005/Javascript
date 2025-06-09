@@ -2,7 +2,7 @@
 
 export interface InputComponentProps {
   id?: string;
-  type: string;
+  type?: string;
   label: string;
   placeholder?: string;
   onChange?: (value: string) => void;

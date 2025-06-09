@@ -1,12 +1,13 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import InputComponent from '@/components/FormElements/InputComponent/page';
 import SelectComponent from '@/components/FormElements/SelectComponent/page';
 import { Button } from '@/components/ui/button';
 import { registerNewUser } from '@/services/register/user';
+import { toast } from 'react-toastify';
 
-// Ví dụ registrationFormControls nếu bạn chưa có
 export const registrationFormControls = [
   {
     id: 'name',
@@ -49,24 +50,34 @@ const initialFormData: Record<string, string> = {
 
 export default function Page() {
   const [formData, setFormData] = useState(initialFormData);
-  const isRegistered = false;
+  const [isRegistered, setIsRegistered] = useState(false);
+  const router = useRouter();
 
   const handleChange = (id: string, value: string) => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
   async function handleSubmit() {
-   const data = await registerNewUser(formData);
-   console.log(data);
-  };
-
-  function isFormValid() {
-    return formData && formData.name.trim() !== ''
-    && formData.email && formData.email.trim() !== ''
-    && formData.password && formData.password.trim() !== '' ? true : false
+    try {
+      const data = await registerNewUser(formData);
+      toast.success('Đăng ký thành công!');
+      setIsRegistered(true);
+    } catch (error) {
+      toast.error('Đăng ký thất bại. Vui lòng thử lại.');
+    }
   }
 
-  console.log(isFormValid());
+  function isFormValid() {
+    return (
+      formData.name.trim() !== '' &&
+      formData.email.trim() !== '' &&
+      formData.password.trim() !== ''
+    );
+  }
+
+  function handleLoginClick() {
+    router.push('/login');
+  }
 
   return (
     <div className="bg-white relative">
@@ -80,6 +91,7 @@ export default function Page() {
 
               {isRegistered ? (
                 <Button
+                  onClick={handleLoginClick}
                   className="inline-flex w-full items-center justify-center bg-red-500 px-6 py-4 text-lg text-white transition-all duration-200 ease-in focus:shadow font-semibold uppercase tracking-wide"
                   style={{ borderRadius: '10px' }}
                 >
@@ -97,7 +109,7 @@ export default function Page() {
                         onChange={(value) => handleChange(it.id, value)}
                         value={formData[it.id] ?? ''}
                       />
-                    ) : it.componentType === 'select' ? (
+                    ) : (
                       <SelectComponent
                         key={it.id}
                         label={it.label}
@@ -105,7 +117,7 @@ export default function Page() {
                         onChange={(value) => handleChange(it.id, value)}
                         value={formData[it.id] ?? ''}
                       />
-                    ) : null
+                    )
                   )}
                   <Button
                     onClick={handleSubmit}
@@ -117,7 +129,6 @@ export default function Page() {
                       fontWeight: 'bolder',
                     }}
                     disabled={!isFormValid()}
-                    
                   >
                     Đăng Ký
                   </Button>

@@ -9,6 +9,8 @@ interface User {
   name?: string;
   _id?: string;
   role?: string;
+  displayName?: string;
+  photoURL?: string;
 }
 
 interface GlobalContextType {
@@ -32,20 +34,35 @@ export default function GlobalState({ children }: { children: ReactNode }) {
       const token = Cookies.get('token');
       if (token) {
         setIsAuthUser(true);
-        try {
-          const res = await fetch('/api/login', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const data = await res.json();
-          if (data && data.user) {
-            setUser(data.user);
-          } else {
+        // Ưu tiên lấy user từ localStorage nếu có
+        const localUser = localStorage.getItem('user');
+        if (localUser) {
+          setUser(JSON.parse(localUser));
+        } else {
+          // Nếu không có thì gọi API /api/me
+          try {
+            const res = await fetch('/api/me', {
+              headers: { Authorization: `Bearer ${token}` },
+              method: 'GET',
+            });
+            const contentType = res.headers.get('content-type');
+            if (contentType && contentType.includes('application/json')) {
+              const data = await res.json();
+              if (data && data.user) {
+                setUser(data.user);
+                localStorage.setItem('user', JSON.stringify(data.user));
+              } else {
+                setUser(null);
+                setIsAuthUser(false);
+              }
+            } else {
+              setUser(null);
+              setIsAuthUser(false);
+            }
+          } catch (err) {
             setUser(null);
             setIsAuthUser(false);
           }
-        } catch (err) {
-          setUser(null);
-          setIsAuthUser(false);
         }
       } else {
         setIsAuthUser(false);

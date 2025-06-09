@@ -1,56 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
-import connectDB from "@/lib/mongodb";
+import { NextResponse } from "next/server";
 import Product from "@/models/products";
+import connectDB from "@/lib/mongodb";
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
   try {
     await connectDB();
     const body = await request.json();
+    const {productName ,productImage, productPrice,productPriceOld,date,productcode,quantity,
+      actor,pages,description,category,subcategory,popular, recommend
+     } = body;
 
-    const {
-      productName,
-      productImage,
-      productPrice,
-      productPriceOld,
-      date,
-      productcode,
-      quantity,
-      actor,
-      pages,
-      description,
-      category,
-      subcategory,
-      popular,
-      recommend,
-    } = body;
-    if (
-      !productName || !productImage || productPrice === undefined || productPriceOld === undefined ||
-      !date || !productcode || quantity === undefined || pages === undefined ||
-      !description || !category || !subcategory || !actor
+    if ( !productName || !productImage || !productPrice || !productPriceOld|| !date || 
+      !productcode || !quantity || !actor || !pages || !description || !category || !subcategory || !popular ||
+      !recommend
     ) {
       return NextResponse.json({ message: "Missing required fields" }, { status: 400 });
     }
 
-    const product = await Product.create({
-      productName,
-      productImage,
-      productPrice,
-      productPriceOld,
-      date,
-      productcode,
-      quantity,
-      actor,
-      pages,
-      description,
-      category,
-      subcategory,
-      popular,
-      recommend,
-    });
+    const product = await Product.create({  productName, productImage, productPrice, productPriceOld, date,
+      productcode, quantity, actor, pages, description, category, subcategory, popular, recommend
+     });
 
-    return NextResponse.json(product, { status: 201 });
+    return NextResponse.json({ message: "Product created successfully", product }, { status: 201 });
   } catch (error) {
-    console.error("Error creating product:", error);
+    console.error("Error creating Product:", error);
     return NextResponse.json({ message: "Error creating product" }, { status: 500 });
+  }
+}
+
+export async function GET() {
+  try {
+    await connectDB();
+    const products = await Product.find({});
+    return NextResponse.json(products);
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return NextResponse.json({ message: "Error fetching banners" }, { status: 500 });
   }
 }

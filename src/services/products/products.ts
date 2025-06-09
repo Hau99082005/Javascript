@@ -47,7 +47,7 @@ productRoute.post('/api/products', async (req: Request, res: Response) => {
   }
 });
 
-productRoute.get('/api/popular-products', async (req: Request, res: Response) => {
+productRoute.get('/api/products', async (req: Request, res: Response) => {
   try {
     const products = await Product.find({ popular: true });
 

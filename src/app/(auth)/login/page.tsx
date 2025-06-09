@@ -12,6 +12,7 @@ import { useContext, useEffect, useState } from 'react';
 import { login } from '@/services/login/user';
 import Cookies from 'js-cookie';
 import { GlobalContext } from '@/context/page';
+import { toast } from 'react-toastify';
 
 const initialFormdata = {
   email: '',
@@ -32,11 +33,7 @@ export default function Page() {
     try {
       setIsLoading(true);
       await auth?.loginWithGoogle();
-
-      // Sau khi login thành công, cập nhật trạng thái đăng nhập
       setIsAuthUser(true);
-
-      // Nếu bạn muốn lấy user info từ auth hiện tại
       const currentUser = auth?.currentUser;
       if (currentUser) {
         setUser({
@@ -44,7 +41,6 @@ export default function Page() {
           email: currentUser.email,
           displayName: currentUser.displayName,
           photoURL: currentUser.photoURL,
-          // ... thêm các thông tin bạn cần
         });
         localStorage.setItem('user', JSON.stringify({
           uid: currentUser.uid,
@@ -53,20 +49,20 @@ export default function Page() {
           photoURL: currentUser.photoURL,
         }));
       }
-
+      toast.success('Đăng nhập Google thành công!');
       router.push('/');
     } catch (error) {
       console.error('Error during Google login:', error);
       setIsAuthUser(false);
+      toast.error('Đăng nhập Google thất bại!');
     } finally {
       setIsLoading(false);
     }
   };
 
   async function handleLogin() {
-    if (isLoading) return; // tránh bấm nhiều lần
+    if (isLoading) return;
     setIsLoading(true);
-
     try {
       const res = await login(formData);
       console.log(res);
@@ -76,14 +72,16 @@ export default function Page() {
         setFormData(initialFormdata);
         Cookies.set('token', res?.finalData?.token);
         localStorage.setItem('user', JSON.stringify(res?.finalData?.user));
-        router.push('/'); // chuyển về trang chủ sau login thành công
+        toast.success('Đăng nhập thành công!');
+        router.push('/');
       } else {
         setIsAuthUser(false);
-        alert('Email hoặc mật khẩu không đúng!');
+        toast.error('Email hoặc mật khẩu không đúng!');
       }
     } catch (error) {
       console.error('Login error:', error);
       setIsAuthUser(false);
+      toast.error('Đăng nhập thất bại!');
     } finally {
       setIsLoading(false);
     }
