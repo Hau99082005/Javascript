@@ -36,7 +36,7 @@ export const registrationFormControls = [
     componentType: 'select',
     options: [
       { label: 'Khách hàng', value: 'customer' },
-      { label: 'Admin', value: 'seller' },
+      { label: 'Admin', value: 'admin' },
     ],
   },
 ];

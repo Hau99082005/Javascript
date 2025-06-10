@@ -3,7 +3,7 @@
 import { useState, Fragment, useContext, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import {  useRouter } from "next/navigation";
 import { Button, Dialog, Transition } from "@headlessui/react";
 import { navOptions } from "@/utils";
 import { FaBell, FaSearch, FaShoppingCart } from "react-icons/fa";
@@ -19,7 +19,8 @@ export default function Navbar() {
   const searchBoxRef = useRef<HTMLDivElement>(null);
   const { showNavModal, setShowNavModal } = useContext(GlobalContext) || {};
   const router = useRouter();
-
+    
+ 
   const toggleMenu = () => {
     if (setShowNavModal) setShowNavModal(!showNavModal);
     setIsMenuOpen(!isMenuOpen);
@@ -83,7 +84,6 @@ export default function Navbar() {
                 <FaSearch width={30} height={30} />
               </Button>
             </form>
-            {/* Dropdown suggestion */}
             {showSuggestions && suggestions.length > 0 && (
               <div className="absolute z-50 left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-lg mt-1 max-h-96 overflow-y-auto">
                 {suggestions.map((item) => (

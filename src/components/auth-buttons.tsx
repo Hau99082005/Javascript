@@ -1,5 +1,4 @@
 'use client';
-
 import { useAuth } from '@/context/auth';
 import Link from 'next/link';
 import { AiOutlineLogout } from 'react-icons/ai';
@@ -15,33 +14,66 @@ import {
 } from './ui/dropdown-menu';
 import { FaUser } from 'react-icons/fa';
 import { GlobalContext } from '@/context/page';
-import { useContext } from 'react';
-import { useRouter } from 'next/navigation';
+import { useContext, useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
+
+interface GlobalContextType {
+  showNavModal: boolean;
+  setShowNavModal: (show: boolean) => void;
+  user: any;
+  isAuthUser: boolean;
+  setIsAuthUser: (isAuth: boolean) => void;
+  setUser: (user: any) => void;
+  currentUpdatedProduct: any;
+  setCurrentUpdatedProduct: (product: any) => void;
+  showCartModal: boolean;
+  setShowCartModal: (show: boolean) => void;
+}
 
 export default function AuthButtons() {
   const auth = useAuth();
-  const { user, isAuthUser, setIsAuthUser, setUser } = useContext(GlobalContext);
+  const { showNavModal, setShowNavModal } = useContext(GlobalContext) as GlobalContextType;
+  const {user, isAuthUser, setIsAuthUser, setUser, currentUpdatedProduct, setCurrentUpdatedProduct, showCartModal, setShowCartModal
+    } = useContext(GlobalContext) as GlobalContextType;
   const router = useRouter();
+  const pathname = usePathname();
+  useEffect(() => {
+    if(pathname !== "/admin/add-product" && currentUpdatedProduct !== null)
+      setCurrentUpdatedProduct(null);
+  },[pathname]);
 
-  function handleLogout() {
-    setIsAuthUser(false);
-    setUser(null);
-    Cookies.remove('token');
-    localStorage.clear();
-    router.push('/');
+  const isAdmin = pathname.includes('admin');
+
+  async function handleLogout() {
+    try {
+      if (auth?.logout) {
+        await auth.logout();
+      }
+      setIsAuthUser(false);
+      setUser(null);
+      Cookies.remove('token');
+      localStorage.clear();
+      router.push('/');
+    } catch (error) {
+      console.error('Error during logout:', error);
+    }
   }
 
-  if (auth?.currentUser) {
+  if (auth?.currentUser || (isAuthUser && user)) {
+    const displayName = auth?.currentUser?.displayName || user?.name || 'User';
+    const email = auth?.currentUser?.email || user?.email;
+    const photoURL = auth?.currentUser?.photoURL;
+
     return (
       <DropdownMenu>
         <DropdownMenuTrigger>
           <Avatar>
-            {!!auth.currentUser.photoURL ? (
+            {!!photoURL ? (
               <div className="relative w-full h-full">
                 <Image
-                  src={auth.currentUser.photoURL}
-                  alt={`${auth.currentUser.displayName} avatar`}
+                  src={photoURL}
+                  alt={`${displayName} avatar`}
                   fill
                   style={{ objectFit: 'cover' }}
                   unoptimized
@@ -49,36 +81,42 @@ export default function AuthButtons() {
               </div>
             ) : (
               <AvatarFallback>
-                {(auth.currentUser.displayName || auth.currentUser.email)?.[0] || 'U'}
+                {displayName[0] || 'U'}
               </AvatarFallback>
             )}
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
           <DropdownMenuLabel>
-            <div>{auth.currentUser.displayName || 'User'}</div>
-            <div className="font-normal text-xs">{auth.currentUser.email}</div>
+            <div>{displayName}</div>
+            <div className="font-normal text-xs">{email}</div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <Link href={'/account'} className="text-black no-underline" style={{textDecoration: "none"}}>
-              Tài Khoản
-            </Link>
-          </DropdownMenuItem>
-          {!!auth.customClaims?.admin && (
+          {!isAdmin && isAuthUser && (
             <DropdownMenuItem asChild>
-              <Link href={'/admin-dashboard'} className="text-black no-underline">
-                Admin
+              <button onClick={() => router.push('/account')} className="text-black no-underline w-full text-left">
+                Tài Khoản
+              </button>
+            </DropdownMenuItem>
+          )}
+          {user?.role === "admin" && (
+            <DropdownMenuItem asChild>
+              <Link href="/admin" className="text-black no-underline w-full text-left"
+              style={{textDecoration: "none", fontFamily: "Lato"}}>
+                Admin Dashboard
               </Link>
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem
-            onClick={async () => {
-              await auth.logout();
-              handleLogout();
-            }}
-          >
-            <AiOutlineLogout width={30} height={30} /> Đăng Xuất
+          <DropdownMenuItem asChild>
+            <button
+              onClick={handleLogout}
+              className="w-full text-left text-black no-underline"
+            >
+              <div className="flex items-center gap-2">
+                <AiOutlineLogout width={20} height={20} />
+                <span>Đăng Xuất</span>
+              </div>
+            </button>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
