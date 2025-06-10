@@ -48,11 +48,10 @@ export default function SingleProductCard({ product }: { product: any }) {
           )}
           
         </div>
-        <button
-          className="w-full rounded-full bg-red-500 text-white" style={{border: "none", borderRadius: "5px",
-            display: "flex", fontFamily: "Lato", fontSize: "20px", fontWeight: "bold"
-          }}
-          onClick={() => addCart()}><FaShoppingCart/>Thêm vào giỏ hàng</button>
+       <button className="w-full flex items-center justify-center gap-2 rounded-md bg-red-500 text-white px-4 py-2 font-bold text-lg hover:bg-red-600 transition-all" 
+       style={{ fontFamily: "Lato" , border: "none", borderRadius: "10px"}}
+        onClick={() => addCart()}>
+        <FaShoppingCart />Thêm vào giỏ hàng</button>
       </div>
     </div>
   );

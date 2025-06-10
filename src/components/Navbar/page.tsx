@@ -32,8 +32,6 @@ export default function Navbar() {
       router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
-
-  // Fetch suggestion khi gõ
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     if (e.target.value.trim().length > 0) {
@@ -46,8 +44,6 @@ export default function Navbar() {
       setShowSuggestions(false);
     }
   };
-
-  // Đóng suggestion khi click ra ngoài
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (searchBoxRef.current && !searchBoxRef.current.contains(event.target as Node)) {

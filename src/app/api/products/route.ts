@@ -34,19 +34,15 @@ export async function GET(request: Request) {
     if (!connection) {
       return NextResponse.json({ message: "Database connection failed" }, { status: 500 });
     }
-
-    // Get search query from URL
     const { searchParams } = new URL(request.url);
     const searchQuery = searchParams.get('search');
 
     let products;
     if (searchQuery) {
-      // Search products by name (case insensitive)
       products = await Product.find({
         productName: { $regex: searchQuery, $options: 'i' }
       });
     } else {
-      // Get all products if no search query
       products = await Product.find({});
     }
 
