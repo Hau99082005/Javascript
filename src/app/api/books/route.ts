@@ -1,6 +1,12 @@
 import { NextResponse } from "next/server";
 import books from "@/models/books";
 import connectDB from "@/lib/mongodb";
+import { Document } from "mongoose";
+
+interface BookDocument extends Document {
+  image: string;
+  name: string;
+}
 
 export async function POST(request: Request) {
   try {
@@ -24,10 +30,21 @@ export async function POST(request: Request) {
 export async function GET() {
   try {
     await connectDB();
-    const book = await books.find({});
-    return NextResponse.json(book);
+    const allBooks = await books.find({}).lean();
+    
+    // Convert Mongoose documents to plain objects
+    const plainBooks = allBooks.map((book: any) => ({
+      _id: book._id.toString(),
+      image: book.image,
+      name: book.name
+    }));
+
+    return NextResponse.json(plainBooks, { status: 200 });
   } catch (error) {
     console.error("Error fetching books:", error);
-    return NextResponse.json({ message: "Error fetching books" }, { status: 500 });
+    return NextResponse.json(
+      { message: "Error fetching books", error: error instanceof Error ? error.message : "Unknown error" },
+      { status: 500 }
+    );
   }
 }

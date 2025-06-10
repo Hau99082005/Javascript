@@ -6,4 +6,5 @@ export interface Book {
   productPriceOld: number;
   actor: string;
   description: string;
+  productcode: string;
 }

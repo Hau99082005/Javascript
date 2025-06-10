@@ -28,13 +28,34 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    await connectDB();
-    const products = await Product.find({});
+    const connection = await connectDB();
+    if (!connection) {
+      return NextResponse.json({ message: "Database connection failed" }, { status: 500 });
+    }
+
+    // Get search query from URL
+    const { searchParams } = new URL(request.url);
+    const searchQuery = searchParams.get('search');
+
+    let products;
+    if (searchQuery) {
+      // Search products by name (case insensitive)
+      products = await Product.find({
+        productName: { $regex: searchQuery, $options: 'i' }
+      });
+    } else {
+      // Get all products if no search query
+      products = await Product.find({});
+    }
+
     return NextResponse.json(products);
   } catch (error) {
     console.error("Error fetching products:", error);
-    return NextResponse.json({ message: "Error fetching banners" }, { status: 500 });
+    return NextResponse.json({ 
+      message: "Error fetching products", 
+      error: error instanceof Error ? error.message : "Unknown error" 
+    }, { status: 500 });
   }
 }

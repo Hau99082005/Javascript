@@ -6,6 +6,7 @@ import { BrandHighlightList } from "@/components/BrandHighlight/BrandHighlightLi
 import { FlashSaleSection } from "@/components/FlashSale/FlashSaleSection";
 import Outstanding from "@/components/OutStanding";
 import ProductCard from "@/components/ProductCard";
+import SuggestedBooks from "@/components/SuggestedBooks";
 // import { GlobalContext } from "@/context/page";
 // import { useContext } from "react";
 
@@ -20,6 +21,7 @@ export default function Home() {
       <Books/>
       <BookRanking/>
       <BrandHighlightList/>
+      <SuggestedBooks/>
     </div>
   );
 }

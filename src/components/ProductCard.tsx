@@ -6,12 +6,14 @@ import { toast } from "react-toastify";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { IoMdCloseCircle } from "react-icons/io";
+import Link from "next/link";
 
 interface Product {
   productImage: string;
   productName: string;
   productPrice: number;
   productPriceOld?: number;
+  productcode: string;
 }
 
 const ProductCard: React.FC = () => {
@@ -65,34 +67,36 @@ const ProductCard: React.FC = () => {
                 minHeight: 420,
               }}
             >
-              <div className="position-relative group">
-                <Image
-                  src={
-                    product.productImage.startsWith("http")
-                      ? product.productImage
-                      : product.productImage.startsWith("/")
-                      ? product.productImage
-                      : "/" + product.productImage
-                  }
-                  className="card-img-top object-fit-cover product-img-hover"
-                  alt={product.productName}
-                  style={{
-                    height: "220px",
-                    objectFit: "cover",
-                    borderTopLeftRadius: "1.2rem",
-                    borderTopRightRadius: "1.2rem",
-                    transition: "transform 0.3s",
-                  }}
-                  width={350}
-                  height={220}
-                />
-                <button
+              <div className="position-relative">
+                <Link href={`/products/${encodeURIComponent(product.productcode)}`} className="d-block">
+                  <Image
+                    src={
+                      product.productImage.startsWith("http")
+                        ? product.productImage
+                        : product.productImage.startsWith("/")
+                        ? product.productImage
+                        : "/" + product.productImage
+                    }
+                    className="card-img-top object-fit-cover product-img-hover"
+                    alt={product.productName}
+                    style={{
+                      height: "220px",
+                      objectFit: "cover",
+                      borderTopLeftRadius: "1.2rem",
+                      borderTopRightRadius: "1.2rem",
+                      transition: "transform 0.3s",
+                    }}
+                    width={350}
+                    height={220}
+                  />
+                </Link>
+                <Link href={`/products/${encodeURIComponent(product.productcode)}`}
                   className="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow d-flex align-items-center justify-content-center product-icon-hover"
                   style={{ width: 42, height: 42, zIndex: 2, border: '2px solid #eee' }}
                   title="Xem chi tiết"
                 >
                   <FaEye size={20} color="#e74c3c" />
-                </button>
+                </Link>
                 <button
                   className="btn btn-light position-absolute top-0 start-0 m-2 rounded-circle shadow d-flex align-items-center justify-content-center product-icon-hover"
                   style={{ width: 42, height: 42, zIndex: 2, border: '2px solid #eee' }}

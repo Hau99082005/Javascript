@@ -1,23 +1,62 @@
 'use client';
 
-import { useState, Fragment, useContext } from "react";
+import { useState, Fragment, useContext, useRef, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button, Dialog, Transition } from "@headlessui/react";
 import { navOptions } from "@/utils";
-import { FaSearch, FaShoppingCart } from "react-icons/fa";
+import { FaBell, FaSearch, FaShoppingCart } from "react-icons/fa";
 import AuthButtons from "../auth-buttons";
 import { GlobalContext } from "@/context/page";
 
 
 export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { showNavModal, setShowNavModal } = useContext(GlobalContext);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const searchBoxRef = useRef<HTMLDivElement>(null);
+  const { showNavModal, setShowNavModal } = useContext(GlobalContext) || {};
+  const router = useRouter();
 
   const toggleMenu = () => {
-    setShowNavModal(!showNavModal);
+    if (setShowNavModal) setShowNavModal(!showNavModal);
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setShowSuggestions(false);
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+    }
+  };
+
+  // Fetch suggestion khi gõ
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+    if (e.target.value.trim().length > 0) {
+      const res = await fetch(`/api/products?search=${encodeURIComponent(e.target.value)}`);
+      const data = await res.json();
+      setSuggestions(data.slice(0, 8));
+      setShowSuggestions(true);
+    } else {
+      setSuggestions([]);
+      setShowSuggestions(false);
+    }
+  };
+
+  // Đóng suggestion khi click ra ngoài
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchBoxRef.current && !searchBoxRef.current.contains(event.target as Node)) {
+        setShowSuggestions(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <header className="w-full shadow-md font-semibold relative z-50">
@@ -29,24 +68,61 @@ export default function Navbar() {
           <Link href="/">
             <Image src="/images/fahasa-logo.webp" alt="logo" width={180} height={50} />
           </Link>
-          <div className="hidden lg:flex flex-1 mx-8">
-            <input
-              type="text"
-              placeholder="Bút chấm đọc - Học tiếng Anh"
-              className="w-full border border-gray-300 px-4 py-2 rounded-l-full outline-none"
-            />
-            <Button className="bg-red-600 px-4 py-2 rounded-r-full text-white" style={{ border: "none", borderRadius: "5px" }}>
-              <FaSearch width={30} height={30} />
-            </Button>
+          <div className="relative flex-1 mx-8" ref={searchBoxRef}>
+            <form onSubmit={handleSearch} className="hidden lg:flex w-full">
+              <input
+                type="text"
+                placeholder="Tìm kiếm sản phẩm..."
+                className="w-full border border-gray-300 px-4 py-2 rounded-l-full outline-none focus:border-red-500 transition-colors duration-200"
+                value={searchQuery}
+                onChange={handleInputChange}
+                onFocus={() => { if (suggestions.length > 0) setShowSuggestions(true); }}
+                autoComplete="off"
+              />
+              <Button
+                type="submit"
+                className="bg-red-600 px-4 py-2 rounded-r-full text-white hover:bg-red-700 transition-colors duration-200"
+                style={{ border: "none", borderRadius: "5px" }}
+              >
+                <FaSearch width={30} height={30} />
+              </Button>
+            </form>
+            {/* Dropdown suggestion */}
+            {showSuggestions && suggestions.length > 0 && (
+              <div className="absolute z-50 left-0 right-0 bg-white border border-gray-200 rounded-b-lg shadow-lg mt-1 max-h-96 overflow-y-auto">
+                {suggestions.map((item) => (
+                  <Link style={{textDecoration: "none", fontFamily: "Lato", fontSize: "20px"}}
+                    key={item._id}
+                    href={`/products/${encodeURIComponent(item.productcode)}`}
+                    className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 transition-colors duration-150"
+                    onClick={() => setShowSuggestions(false)}
+                  >
+                    <img
+                      src={item.productImage}
+                      alt={item.productName}
+                      className="w-10 h-14 object-cover rounded"
+                    />
+                    <span className="text-gray-800 line-clamp-2">{item.productName}</span>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
           <div className="flex gap-2 items-center space-x-3">
             <AuthButtons />
             <Link
               href={'/cart'}
               style={{ textDecoration: "none" }}
-              className="text-sm bg-transparent text-gray-600 border-b px-4 py-2 rounded-md uppercase"
+              className="text-sm bg-transparent text-gray-600 border-b px-4 py-2 rounded-md uppercase hover:text-red-600 transition-colors duration-200"
             >
               <FaShoppingCart style={{ width: "20px", height: "20px", color: "gray" }} />
+            </Link>
+            <Link
+              href={'/cart'}
+              style={{ textDecoration: "none" }}
+              className="text-sm bg-transparent text-gray-600 border-b px-4 py-2 rounded-md uppercase hover:text-red-600 transition-colors duration-200"
+            >
+              <FaBell style={{ width: "20px", height: "20px", color: "gray" }} />
             </Link>
             <button
               className="md:hidden p-2 text-gray-700 focus:outline-none"

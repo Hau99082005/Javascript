@@ -72,9 +72,14 @@ const BookDetail: React.FC<Props> = ({ book, onAddToCart }) => {
         <h2 className="text-xl font-bold mb-2" style={{ fontFamily: 'Lato', fontSize: '25px' }}>
           {book.productName}
         </h2>
-        <div className="mb-1 text-gray-600" style={{ fontFamily: 'Lato', fontSize: '20px' }}>
-          Tác giả: {book.actor}
-        </div>
+      <div className="flex items-center gap-2" style={{ fontFamily: 'Lato' }}>
+       <span style={{ fontSize: '20px', fontWeight: 'bold' }}>Mã sách:</span>
+       <span style={{ fontSize: '18px' }}>{book.productcode}</span>
+      </div>
+        <div className="flex items-center gap-2" style={{ fontFamily: 'Lato' }}>
+       <span style={{ fontSize: '20px', fontWeight: 'bold' }}>Tác giả:</span>
+       <span style={{ fontSize: '18px' }}>{book.actor}</span>
+      </div>
         <div
           className="text-lg font-semibold text-red-600"
           style={{ fontFamily: 'Lato', fontSize: '25px' }}
