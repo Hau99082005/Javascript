@@ -1,25 +1,56 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-export default function AdminAddNewProduct() {
+interface Product {
+  _id: string;
+  productName: string;
+  productImage: string;
+  productPrice: number;
+  productPriceOld: number;
+  quantity: number;
+  actor: string;
+  pages: number;
+  description: string;
+  category: string;
+  subcategory: string;
+  popular: boolean;
+  recommend: boolean;
+}
+
+export default function EditProduct({ params }: { params: { id: string } }) {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<Product>({
+    _id: "",
     productName: "",
     productImage: "",
-    productPrice: "",
-    productPriceOld: "",
-    quantity: "",
+    productPrice: 0,
+    productPriceOld: 0,
+    quantity: 0,
     actor: "",
-    pages: "",
+    pages: 0,
     description: "",
     category: "",
     subcategory: "",
     popular: false,
     recommend: false,
   });
+
+  useEffect(() => {
+    fetchProduct();
+  }, [params.id]);
+
+  const fetchProduct = async () => {
+    try {
+      const response = await fetch(`/api/products/${params.id}`);
+      const data = await response.json();
+      setFormData(data);
+    } catch (error) {
+      console.error('Error fetching product:', error);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -32,33 +63,31 @@ export default function AdminAddNewProduct() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch('/api/products', {
-        method: 'POST',
+      const response = await fetch(`/api/products/${params.id}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...formData,
-          productPrice: Number(formData.productPrice).toLocaleString('de-DE'),
-          productPriceOld: Number(formData.productPriceOld).toLocaleString('de-DE'),
+          productPrice: Number(formData.productPrice),
+          productPriceOld: Number(formData.productPriceOld),
           quantity: Number(formData.quantity),
           pages: Number(formData.pages),
-          date: new Date(),
-          productcode: Math.random().toString(36).substring(7),
         }),
       });
 
       if (response.ok) {
-        router.push('/admin/all-products');
+        router.push('/admin/products/all-products');
       }
     } catch (error) {
-      console.error('Error adding product:', error);
+      console.error('Error updating product:', error);
     }
   };
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Thêm sản phẩm mới</h1>
+      <h1 className="text-2xl font-bold mb-6">Sửa sản phẩm</h1>
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-4">
         <div>
           <label className="block mb-1">Tên sản phẩm</label>
@@ -90,7 +119,7 @@ export default function AdminAddNewProduct() {
             <Input
               type="number"
               name="productPrice"
-              value={formData.productPrice}
+              value={Number(formData.productPrice).toLocaleString('de-DE')}
               onChange={handleChange}
               className="w-full p-2 border rounded"
               required
@@ -102,7 +131,7 @@ export default function AdminAddNewProduct() {
             <Input
               type="number"
               name="productPriceOld"
-              value={formData.productPriceOld}
+              value={Number(formData.productPriceOld).toLocaleString('de-DE')}
               onChange={handleChange}
               className="w-full p-2 border rounded"
             />
@@ -210,11 +239,11 @@ export default function AdminAddNewProduct() {
             type="submit"
             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
           >
-            Thêm sản phẩm
+            Cập nhật
           </button>
           <button
             type="button"
-            onClick={() => router.push('/admin/all-products')}
+            onClick={() => router.push('/admin/products/all-products')}
             className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700"
           >
             Hủy
@@ -223,4 +252,4 @@ export default function AdminAddNewProduct() {
       </form>
     </div>
   );
-}
+} 

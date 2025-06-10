@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { IoIosAddCircle } from "react-icons/io";
 
 interface Product {
   _id: string;
@@ -48,19 +49,22 @@ export default function AdminAllProduct() {
   };
 
   const handleEdit = (id: string) => {
-    router.push(`/admin/edit-product/${id}`);
+    router.push(`/admin/products/edit-product/${id}`);
   };
 
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Quản lý sản phẩm</h1>
+        <h1 className="text-2xl font-bold" style={{fontFamily: "Lato", fontSize: "30px", fontWeight: "bold"}}>Quản lý sản phẩm</h1>
         <button
-          onClick={() => router.push('/admin/add-product')}
-          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-        >
-          Thêm sản phẩm mới
-        </button>
+      onClick={() => router.push('/admin/products/add-product')}
+      className="flex items-center gap-2 px-5 py-3 bg-green-600 text-white text-lg font-semibold rounded-xl 
+                 hover:bg-green-700 hover:scale-105 transition-transform duration-200 shadow-md hover:shadow-lg"
+      style={{ fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder", border: "none", borderRadius: "5px"}}
+    >
+      <IoIosAddCircle size={28} />
+      Thêm sản phẩm mới
+    </button>
       </div>
 
       <div className="overflow-x-auto">
@@ -113,12 +117,14 @@ export default function AdminAllProduct() {
                     <button
                       onClick={() => handleEdit(product._id)}
                       className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-1 rounded-lg shadow hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-150"
+                      style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "18px", fontWeight: "bold"}}
                     >
                       Sửa
                     </button>
                     <button
                       onClick={() => handleDelete(product._id)}
                       className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-1 rounded-lg shadow hover:scale-105 hover:from-red-600 hover:to-red-800 transition-all duration-150"
+                      style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "18px", fontWeight: "bold"}}
                     >
                       Xóa
                     </button>

@@ -1,54 +1,25 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
-interface Product {
-  _id: string;
-  productName: string;
-  productImage: string;
-  productPrice: number;
-  productPriceOld: number;
-  quantity: number;
-  actor: string;
-  pages: number;
-  description: string;
-  category: string;
-  subcategory: string;
-  popular: boolean;
-  recommend: boolean;
-}
-
-export default function EditProduct({ params }: { params: { id: string } }) {
+export default function AdminAddNewProduct() {
   const router = useRouter();
-  const [formData, setFormData] = useState<Product>({
-    _id: "",
+  const [formData, setFormData] = useState({
     productName: "",
     productImage: "",
-    productPrice: 0,
-    productPriceOld: 0,
-    quantity: 0,
+    productPrice: "",
+    productPriceOld: "",
+    quantity: "",
     actor: "",
-    pages: 0,
+    pages: "",
     description: "",
     category: "",
     subcategory: "",
     popular: false,
     recommend: false,
   });
-
-  useEffect(() => {
-    fetchProduct();
-  }, [params.id]);
-
-  const fetchProduct = async () => {
-    try {
-      const response = await fetch(`/api/products/${params.id}`);
-      const data = await response.json();
-      setFormData(data);
-    } catch (error) {
-      console.error('Error fetching product:', error);
-    }
-  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -61,35 +32,37 @@ export default function EditProduct({ params }: { params: { id: string } }) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/products/${params.id}`, {
-        method: 'PUT',
+      const response = await fetch('/api/products', {
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           ...formData,
-          productPrice: Number(formData.productPrice),
-          productPriceOld: Number(formData.productPriceOld),
+          productPrice: Number(formData.productPrice).toLocaleString('de-DE'),
+          productPriceOld: Number(formData.productPriceOld).toLocaleString('de-DE'),
           quantity: Number(formData.quantity),
           pages: Number(formData.pages),
+          date: new Date(),
+          productcode: Math.random().toString(36).substring(7),
         }),
       });
 
       if (response.ok) {
-        router.push('/admin/all-products');
+        router.push('/admin/products/all-products');
       }
     } catch (error) {
-      console.error('Error updating product:', error);
+      console.error('Error adding product:', error);
     }
   };
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Sửa sản phẩm</h1>
+      <h1 className="text-2xl font-bold mb-6">Thêm sản phẩm mới</h1>
       <form onSubmit={handleSubmit} className="max-w-2xl space-y-4">
         <div>
           <label className="block mb-1">Tên sản phẩm</label>
-          <input
+          <Input
             type="text"
             name="productName"
             value={formData.productName}
@@ -101,7 +74,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
         <div>
           <label className="block mb-1">Link hình ảnh</label>
-          <input
+          <Input
             type="text"
             name="productImage"
             value={formData.productImage}
@@ -114,7 +87,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block mb-1">Giá</label>
-            <input
+            <Input
               type="number"
               name="productPrice"
               value={formData.productPrice}
@@ -126,7 +99,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
           <div>
             <label className="block mb-1">Giá cũ</label>
-            <input
+            <Input
               type="number"
               name="productPriceOld"
               value={formData.productPriceOld}
@@ -139,7 +112,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block mb-1">Số lượng</label>
-            <input
+            <Input
               type="number"
               name="quantity"
               value={formData.quantity}
@@ -151,7 +124,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
           <div>
             <label className="block mb-1">Tác giả</label>
-            <input
+            <Input
               type="text"
               name="actor"
               value={formData.actor}
@@ -164,7 +137,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
         <div>
           <label className="block mb-1">Số trang</label>
-          <input
+          <Input
             type="number"
             name="pages"
             value={formData.pages}
@@ -175,7 +148,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
         <div>
           <label className="block mb-1">Mô tả</label>
-          <textarea
+          <Textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
@@ -187,7 +160,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="block mb-1">Danh mục</label>
-            <input
+            <Input
               type="text"
               name="category"
               value={formData.category}
@@ -198,7 +171,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
           <div>
             <label className="block mb-1">Danh mục con</label>
-            <input
+            <Input
               type="text"
               name="subcategory"
               value={formData.subcategory}
@@ -237,11 +210,11 @@ export default function EditProduct({ params }: { params: { id: string } }) {
             type="submit"
             className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
           >
-            Cập nhật
+            Thêm sản phẩm
           </button>
           <button
             type="button"
-            onClick={() => router.push('/admin/all-products')}
+            onClick={() => router.push('/admin/products/all-products')}
             className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700"
           >
             Hủy
@@ -250,4 +223,4 @@ export default function EditProduct({ params }: { params: { id: string } }) {
       </form>
     </div>
   );
-} 
+}
