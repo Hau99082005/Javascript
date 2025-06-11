@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
-import Product from "@/models/products";
+import books from "@/models/books";
+
 
 export async function GET(
   request: Request,
@@ -8,11 +9,11 @@ export async function GET(
 ) {
   try {
     await connectDB();
-    const product = await Product.findById(params.id);
-    if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    const book = await books.findById(params.id);
+    if (!book) {
+      return NextResponse.json({ error: "Books not found" }, { status: 404 });
     }
-    return NextResponse.json(product);
+    return NextResponse.json(book);
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
@@ -25,14 +26,14 @@ export async function PUT(
   try {
     await connectDB();
     const body = await request.json();
-    const product = await Product.findByIdAndUpdate(params.id, body, {
+    const book = await books.findByIdAndUpdate(params.id, body, {
       new: true,
       runValidators: true,
     });
-    if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    if (!book) {
+      return NextResponse.json({ error: "books not found" }, { status: 404 });
     }
-    return NextResponse.json(product);
+    return NextResponse.json(book);
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
@@ -40,17 +41,16 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { _id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     await connectDB();
-    const product = await Product.findByIdAndDelete(params._id);
-    console.log(product);
-    if (!product) {
-      return NextResponse.json({ error: "Product not found" }, { status: 404 });
+    const book = await books.findByIdAndDelete(params.id);
+    if (!book) {
+      return NextResponse.json({ error: "books not found" }, { status: 404 });
     }
-    return NextResponse.json({ message: "Product deleted successfully" });
+    return NextResponse.json({ message: "books deleted successfully" });
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
-} 
+}

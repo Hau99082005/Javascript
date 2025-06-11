@@ -34,10 +34,10 @@ export default function AdminAllProduct() {
     }
   };
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (_id: string) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
       try {
-        const response = await fetch(`/api/products/${id}`, {
+        const response = await fetch(`/api/products/[id]${_id}`, {
           method: 'DELETE',
         });
         if (response.ok) {
@@ -86,6 +86,7 @@ export default function AdminAllProduct() {
               <th className="px-6 py-3 text-left">Mã Hàng</th>
               <th className="px-6 py-3 text-left">Giá</th>
               <th className="px-6 py-3 text-left">Số lượng</th>
+              <th className="px-6 py-3 text-left">Thời Gian</th>
               <th className="px-6 py-3 text-left">Danh mục</th>
               <th className="px-6 py-3 text-left">Thao tác</th>
             </tr>

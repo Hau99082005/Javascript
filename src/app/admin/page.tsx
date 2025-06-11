@@ -1,5 +1,5 @@
 "use client";
-import { Image, ImagePlus } from "lucide-react";
+import { BookOpen, BookPlus, Image, ImagePlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { FaLayerGroup, FaBoxOpen, FaPlusCircle } from "react-icons/fa";
 
@@ -49,6 +49,21 @@ export default function AdminView() {
       bgHover: "hover:bg-green-50",
       textColor: "text-red-700",
     },
+    //books
+    {
+    label: "🖼️ Quản lý Sách",
+    icon: <BookOpen size={24} className="text-indigo-600" />,
+    path: "/admin/books/all-books",
+    bgHover: "hover:bg-indigo-50",
+    textColor: "text-indigo-700",
+  },
+  {
+    label: "🆕 Thêm Sách",
+    icon: <BookPlus size={24} className="text-red-600" />,
+    path: "/admin/books/add-books",
+    bgHover: "hover:bg-green-50",
+    textColor: "text-red-700",
+  },
   ];
 
   return (
