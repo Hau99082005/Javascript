@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -20,8 +20,10 @@ interface Product {
   recommend: boolean;
 }
 
-export default function EditProduct({ productId }: { productId: string }) {
+export default function EditProduct() {
+  const { id } = useParams() as { id: string };
   const router = useRouter();
+
   const [formData, setFormData] = useState<Product>({
     _id: "",
     productName: "",
@@ -39,12 +41,13 @@ export default function EditProduct({ productId }: { productId: string }) {
   });
 
   useEffect(() => {
-    fetchProduct();
-  }, [productId]);
+    if (id) fetchProduct();
+  }, [id]);
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`/api/products/${productId}`);
+      const response = await fetch(`/api/products/${id}`);
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const data = await response.json();
       setFormData(data);
     } catch (error) {
@@ -53,23 +56,19 @@ export default function EditProduct({ productId }: { productId: string }) {
   };
 
   const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox"
-        ? (e.target as HTMLInputElement).checked
-        : value,
+      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/products/${productId}`, {
+      const response = await fetch(`/api/products/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -83,9 +82,14 @@ export default function EditProduct({ productId }: { productId: string }) {
 
       if (response.ok) {
         router.push("/admin/products/all-products");
+      } else {
+        const errorData = await response.json();
+        console.error("Failed to update product:", errorData);
+        alert("Cập nhật thất bại: " + (errorData.error || "Không tìm thấy sản phẩm"));
       }
     } catch (error) {
       console.error("Error updating product:", error);
+      alert("Lỗi máy chủ");
     }
   };
 
@@ -232,7 +236,7 @@ export default function EditProduct({ productId }: { productId: string }) {
             <button
               type="submit"
               className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-              style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "20px", fontWeight: "bold"}}
+              style={{ border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "20px", fontWeight: "bold" }}
             >
               Cập nhật
             </button>
@@ -240,7 +244,7 @@ export default function EditProduct({ productId }: { productId: string }) {
               type="button"
               onClick={() => router.push("/admin/products/all-products")}
               className="bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-500 transition"
-               style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "18px", fontWeight: "bold"}}
+              style={{ border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "18px", fontWeight: "bold" }}
             >
               Hủy
             </button>

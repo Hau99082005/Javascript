@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { IoIosAddCircle } from "react-icons/io";
+import { ArrowBigLeft } from "lucide-react";
 
 interface Product {
   _id: string;
@@ -55,7 +56,16 @@ export default function AdminAllProduct() {
   return (
     <div className="p-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold" style={{fontFamily: "Lato", fontSize: "30px", fontWeight: "bold"}}>Quản lý sản phẩm</h1>
+       <div className="flex gap-2">
+          <button onClick={() => router.push('/admin')}
+  className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 shadow transition-all duration-200"
+  aria-label="Go back"
+>
+  <ArrowBigLeft className="w-6 h-6" />
+</button>
+
+         <h1 className="text-2xl font-bold text-red-500" style={{fontFamily: "Lato", fontSize: "30px", fontWeight: "bold"}}>Quản lý sản phẩm</h1>
+       </div>
         <button
       onClick={() => router.push('/admin/products/add-product')}
       className="flex items-center gap-2 px-5 py-3 bg-green-600 text-white text-lg font-semibold rounded-xl 

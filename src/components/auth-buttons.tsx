@@ -80,9 +80,22 @@ export default function AuthButtons() {
                 />
               </div>
             ) : (
-              <AvatarFallback>
-                {displayName[0] || 'U'}
-              </AvatarFallback>
+             <AvatarFallback
+  style={{
+    border: "none",
+    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.15)",
+    backgroundColor: "#f0f0f0",
+    color: "red",
+    fontWeight: "bold",
+    fontSize: "1.2rem",
+    letterSpacing: "1px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center"
+     }}
+      >
+      {displayName?.split(' ').pop()?.charAt(0).toUpperCase() || 'H'}
+        </AvatarFallback>
             )}
           </Avatar>
         </DropdownMenuTrigger>

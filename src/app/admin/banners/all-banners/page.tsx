@@ -3,75 +3,71 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { IoIosAddCircle } from "react-icons/io";
-import { ArrowBigLeft } from "lucide-react";
+import { ArrowBigLeft} from "lucide-react";
 
-interface Category {
+interface Banner {
   _id: string;
-  name: string;
   image: string;
   desc: string;
 }
 
-export default function AdminAllCategory() {
-  const [categories, setCategories] = useState<Category[]>([]);
+export default function AdminAllBanner() {
+  const [banners, setBanners] = useState<Banner[]>([]);
   const router = useRouter();
 
   useEffect(() => {
-    fetchCategories();
+    fetchBanners();
   }, []);
 
-  const fetchCategories = async () => {
+  const fetchBanners = async () => {
     try {
-      const response = await fetch('/api/categories');
+      const response = await fetch("/api/banners");
       const data = await response.json();
-      setCategories(data);
+      setBanners(data);
     } catch (error) {
-      console.error('Error fetching Categories:', error);
+      console.error("Error fetching Banners:", error);
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
+    if (window.confirm("Bạn có chắc chắn muốn xóa Banner này?")) {
       try {
-        const response = await fetch(`/api/categories/${id}`, {
-          method: 'DELETE',
+        const response = await fetch(`/api/banners/${id}`, {
+          method: "DELETE",
         });
-        if (response.ok) fetchCategories();
+        if (response.ok) fetchBanners();
       } catch (error) {
-        console.error('Error deleting Categories:', error);
+        console.error("Error deleting Banners:", error);
       }
     }
   };
 
   const handleEdit = (id: string) => {
-    router.push(`/admin/categories/edit-category/${id}`);
+    router.push(`/admin/banners/edit-banners/${id}`);
   };
 
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-8">
-       <div className="flex gap-2">
-            <button onClick={() => router.push('/admin')}
+<div className="flex gap-2">
+         <button onClick={() => router.push('/admin')}
   className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 shadow transition-all duration-200"
   aria-label="Go back"
->
-  <ArrowBigLeft className="w-6 h-6" />
-</button>
+    >
+    <ArrowBigLeft className="w-6 h-6" />
+      </button>
 
-
-
-          <h1 className="text-3xl font-bold text-gray-800" style={{ fontFamily: "Lato", fontSize: "25px", fontWeight: "bolder"
-         }}>
-          Quản lý Danh Mục
+        <h1 className="text-3xl font-bold text-gray-800" style={{ fontFamily: "Lato", fontSize: "25px", fontWeight: "bolder" }}>
+          Quản lý Banner
         </h1>
-       </div>
+</div>
         <button
-          onClick={() => router.push('/admin/categories/add-categories')}
+          onClick={() => router.push("/admin/banners/add-banners")}
           className="flex items-center gap-2 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition"
           style={{ fontFamily: "Lato", fontWeight: "bold", fontSize: "16px", border: "none", borderRadius: "5px" }}
         >
           <IoIosAddCircle size={24} />
-          Thêm Danh Mục mới
+          Thêm Banner mới
         </button>
       </div>
 
@@ -80,29 +76,28 @@ export default function AdminAllCategory() {
           <thead>
             <tr className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900 uppercase text-sm">
               <th className="px-6 py-4 text-left">Hình ảnh</th>
-              <th className="px-6 py-4 text-left">Tên Danh Mục</th>
               <th className="px-6 py-4 text-left">Mô Tả</th>
               <th className="px-6 py-4 text-left">Hành Động</th>
             </tr>
           </thead>
           <tbody>
-            {categories.map((category) => (
+            {banners.map((banner) => (
               <tr
-                key={category._id}
+                key={banner._id}
                 className="border-t border-gray-200 hover:bg-blue-50 transition"
               >
                 <td className="px-6 py-4">
                   <div className="w-14 h-14 relative">
-                    {category.image ? (
+                    {banner.image ? (
                       <Image
                         src={
-                          category.image.startsWith("http")
-                            ? category.image
-                            : category.image.startsWith("/")
-                            ? category.image
-                            : "/" + category.image
+                          banner.image.startsWith("http")
+                            ? banner.image
+                            : banner.image.startsWith("/")
+                            ? banner.image
+                            : "/" + banner.image
                         }
-                        alt={category.name}
+                        alt={banner.desc}
                         fill
                         className="object-cover rounded-full border shadow-sm"
                       />
@@ -113,19 +108,18 @@ export default function AdminAllCategory() {
                     )}
                   </div>
                 </td>
-                <td className="px-6 py-4 font-medium text-gray-800">{category.name}</td>
-                <td className="px-6 py-4 text-gray-600">{category.desc}</td>
+                <td className="px-6 py-4 text-gray-600">{banner.desc}</td>
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handleEdit(category._id)}
+                      onClick={() => handleEdit(banner._id)}
                       className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-1.5 rounded-lg shadow hover:scale-105 transition"
                       style={{ fontFamily: "Lato", fontWeight: "bold", borderRadius: "5px" }}
                     >
                       Sửa
                     </button>
                     <button
-                      onClick={() => handleDelete(category._id)}
+                      onClick={() => handleDelete(banner._id)}
                       className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-1.5 rounded-lg shadow hover:scale-105 transition"
                       style={{ fontFamily: "Lato", fontWeight: "bold", border: "none", borderRadius: "5px" }}
                     >
@@ -135,7 +129,7 @@ export default function AdminAllCategory() {
                 </td>
               </tr>
             ))}
-            {categories.length === 0 && (
+            {banners.length === 0 && (
               <tr>
                 <td colSpan={4} className="text-center py-8 text-gray-500 font-semibold">
                   Không có danh mục nào.

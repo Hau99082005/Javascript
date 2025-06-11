@@ -6,6 +6,7 @@ const productRoute = express.Router();
 productRoute.post('/api/products', async (req: Request, res: Response) => {
   try {
     const {
+      id,
       productName,
       productImage,
       productPrice,
@@ -23,6 +24,7 @@ productRoute.post('/api/products', async (req: Request, res: Response) => {
     } = req.body;
 
     const newProduct: IProduct = new Product({
+      id,
       productName,
       productImage,
       productPrice,
