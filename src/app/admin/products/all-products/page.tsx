@@ -108,7 +108,7 @@ export default function AdminAllProduct() {
                 <td className="px-6 py-4 font-semibold text-gray-800 max-w-xs truncate" title={product.productName}>{product.productName}</td>
                 <td className="px-6 py-4 font-semibold text-gray-800 max-w-xs truncate">{product.productcode}</td>
                 <td className="px-6 py-4 text-blue-700 font-bold">
-                  {product.productPrice.toLocaleString('de-DE')}đ
+                  {product.productPrice.toLocaleString('vi-VN')}đ
                 </td>
                 <td className="px-6 py-4 text-center">{product.quantity}</td>
                 <td className="px-6 py-4 text-gray-600">{product.category}</td>

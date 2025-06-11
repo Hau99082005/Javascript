@@ -20,7 +20,7 @@ interface Product {
   recommend: boolean;
 }
 
-export default function EditProduct({ params }: { params: { id: string } }) {
+export default function EditProduct({ productId }: { productId: string }) {
   const router = useRouter();
   const [formData, setFormData] = useState<Product>({
     _id: "",
@@ -40,34 +40,38 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
   useEffect(() => {
     fetchProduct();
-  }, [params.id]);
+  }, [productId]);
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`/api/products/${params.id}`);
+      const response = await fetch(`/api/products/${productId}`);
       const data = await response.json();
       setFormData(data);
     } catch (error) {
-      console.error('Error fetching product:', error);
+      console.error("Error fetching product:", error);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
     const { name, value, type } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? (e.target as HTMLInputElement).checked : value
+      [name]: type === "checkbox"
+        ? (e.target as HTMLInputElement).checked
+        : value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/products/${params.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+      const response = await fetch(`/api/products/${productId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
           productPrice: Number(formData.productPrice),
@@ -78,178 +82,171 @@ export default function EditProduct({ params }: { params: { id: string } }) {
       });
 
       if (response.ok) {
-        router.push('/admin/products/all-products');
+        router.push("/admin/products/all-products");
       }
     } catch (error) {
-      console.error('Error updating product:', error);
+      console.error("Error updating product:", error);
     }
   };
 
   return (
-    <div className="p-8">
-      <h1 className="text-2xl font-bold mb-6">Sửa sản phẩm</h1>
-      <form onSubmit={handleSubmit} className="max-w-2xl space-y-4">
-        <div>
-          <label className="block mb-1">Tên sản phẩm</label>
-          <Input
-            type="text"
-            name="productName"
-            value={formData.productName}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1">Link hình ảnh</label>
-          <Input
-            type="text"
-            name="productImage"
-            value={formData.productImage}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            required
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
+    <div className="p-6 bg-gradient-to-b from-blue-50 to-white min-h-screen">
+      <div className="max-w-4xl mx-auto bg-white shadow-2xl rounded-2xl p-10">
+        <h1 className="text-4xl font-bold text-center text-blue-700 mb-10">
+          Cập nhật sản phẩm
+        </h1>
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-1">Giá</label>
+            <label className="block font-semibold mb-1">Tên sản phẩm</label>
+            <Input
+              name="productName"
+              value={formData.productName}
+              onChange={handleChange}
+              required
+              placeholder="Nhập tên sản phẩm"
+            />
+          </div>
+
+          <div>
+            <label className="block font-semibold mb-1">Link hình ảnh</label>
+            <Input
+              name="productImage"
+              value={formData.productImage}
+              onChange={handleChange}
+              required
+              placeholder="https://example.com/image.jpg"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block font-semibold mb-1">Giá (VNĐ)</label>
+              <Input
+                type="number"
+                name="productPrice"
+                value={formData.productPrice}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-semibold mb-1">Giá cũ (VNĐ)</label>
+              <Input
+                type="number"
+                name="productPriceOld"
+                value={formData.productPriceOld}
+                onChange={handleChange}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block font-semibold mb-1">Số lượng</label>
+              <Input
+                type="number"
+                name="quantity"
+                value={formData.quantity}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              <label className="block font-semibold mb-1">Tác giả</label>
+              <Input
+                type="text"
+                name="actor"
+                value={formData.actor}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block font-semibold mb-1">Số trang</label>
             <Input
               type="number"
-              name="productPrice"
-              value={Number(formData.productPrice).toLocaleString('de-DE')}
+              name="pages"
+              value={formData.pages}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
             />
           </div>
 
           <div>
-            <label className="block mb-1">Giá cũ</label>
-            <Input
-              type="number"
-              name="productPriceOld"
-              value={Number(formData.productPriceOld).toLocaleString('de-DE')}
+            <label className="block font-semibold mb-1">Mô tả</label>
+            <Textarea
+              name="description"
+              rows={4}
+              value={formData.description}
               onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1">Số lượng</label>
-            <Input
-              type="number"
-              name="quantity"
-              value={formData.quantity}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
+              placeholder="Mô tả chi tiết sản phẩm..."
             />
           </div>
 
-          <div>
-            <label className="block mb-1">Tác giả</label>
-            <Input
-              type="text"
-              name="actor"
-              value={formData.actor}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              required
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block mb-1">Số trang</label>
-          <Input
-            type="number"
-            name="pages"
-            value={formData.pages}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1">Mô tả</label>
-          <Textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            rows={4}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block mb-1">Danh mục</label>
-            <Input
-              type="text"
-              name="category"
-              value={formData.category}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block font-semibold mb-1">Danh mục</label>
+              <Input
+                type="text"
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+              />
+            </div>
+            <div>
+              <label className="block font-semibold mb-1">Danh mục con</label>
+              <Input
+                type="text"
+                name="subcategory"
+                value={formData.subcategory}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block mb-1">Danh mục con</label>
-            <Input
-              type="text"
-              name="subcategory"
-              value={formData.subcategory}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-            />
+          <div className="flex flex-wrap gap-6 pt-4">
+            <label className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                name="popular"
+                checked={formData.popular}
+                onChange={handleChange}
+                className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <span className="text-sm font-medium">Sản phẩm phổ biến</span>
+            </label>
+            <label className="flex items-center space-x-3">
+              <input
+                type="checkbox"
+                name="recommend"
+                checked={formData.recommend}
+                onChange={handleChange}
+                className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <span className="text-sm font-medium">Sản phẩm đề xuất</span>
+            </label>
           </div>
-        </div>
 
-        <div className="flex gap-4">
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              name="popular"
-              checked={formData.popular}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            Sản phẩm phổ biến
-          </label>
-
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              name="recommend"
-              checked={formData.recommend}
-              onChange={handleChange}
-              className="mr-2"
-            />
-            Sản phẩm đề xuất
-          </label>
-        </div>
-
-        <div className="flex gap-4">
-          <button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700"
-          >
-            Cập nhật
-          </button>
-          <button
-            type="button"
-            onClick={() => router.push('/admin/products/all-products')}
-            className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700"
-          >
-            Hủy
-          </button>
-        </div>
-      </form>
+          <div className="flex justify-end gap-4 mt-6">
+            <button
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "20px", fontWeight: "bold"}}
+            >
+              Cập nhật
+            </button>
+            <button
+              type="button"
+              onClick={() => router.push("/admin/products/all-products")}
+              className="bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-500 transition"
+               style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "18px", fontWeight: "bold"}}
+            >
+              Hủy
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
-} 
+}
