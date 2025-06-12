@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let decoded: any;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET!);
+      decoded = jwt.verify(token, process.env.JWT_SECRET!, { algorithms: ['HS256'] });
     } catch (err) {
       return NextResponse.json({ message: 'Token không hợp lệ.' }, { status: 401 });
     }

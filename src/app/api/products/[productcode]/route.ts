@@ -4,11 +4,11 @@ import Product from "@/models/products";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { productcode: string } }
 ) {
   try {
     await connectDB();
-    const product = await Product.findById(params.id);
+    const product = await Product.findOne({ productcode: params.productcode });
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
@@ -20,15 +20,19 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { productcode: string } }
 ) {
   try {
     await connectDB();
     const body = await request.json();
-    const product = await Product.findByIdAndUpdate(params.id, body, {
-      new: true,
-      runValidators: true,
-    });
+    const product = await Product.findOneAndUpdate(
+      { productcode: params.productcode },
+      body,
+      {
+        new: true,
+        runValidators: true,
+      }
+    );
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }
@@ -40,12 +44,11 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { _id: string } }
+  { params }: { params: { productcode: string } }
 ) {
   try {
     await connectDB();
-    const product = await Product.findByIdAndDelete(params._id);
-    console.log(product);
+    const product = await Product.findOneAndDelete({ productcode: params.productcode });
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }

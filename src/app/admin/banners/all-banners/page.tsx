@@ -50,11 +50,13 @@ export default function AdminAllBanner() {
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-8">
 <div className="flex gap-2">
-         <button onClick={() => router.push('/admin')}
-  className="p-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 shadow transition-all duration-200"
+           <button onClick={() => router.push('/admin')}
+  className="p-2 rounded-full bg-gray-100 hover:bg-red-200 text-gray-700 shadow transition-all duration-200"
   aria-label="Go back"
+  style={{border: "none", borderRadius: "5px"}}
     >
-    <ArrowBigLeft className="w-6 h-6" />
+    <ArrowBigLeft className="w-6 h-6 hover:text-white " 
+    style={{fontWeight: "bolder", fontSize: "25px", color: "red"}}/>
       </button>
 
         <h1 className="text-3xl font-bold text-gray-800" style={{ fontFamily: "Lato", fontSize: "25px", fontWeight: "bolder" }}>

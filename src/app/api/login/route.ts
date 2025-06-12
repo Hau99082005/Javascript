@@ -45,7 +45,10 @@ export async function POST(req) {
             id: checkUser._id,
             email: checkUser.email,
             role: checkUser.role,
-        }, process.env.JWT_SECRET, { expiresIn: '1d' });
+        }, process.env.JWT_SECRET, { 
+            expiresIn: '1d',
+            algorithm: 'HS256'
+        });
 
         const finalData = {
             token,

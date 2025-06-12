@@ -1,35 +1,40 @@
-import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/lib/mongodb";
-import Order from "@/models/order";
-import OrderItem from "@/models/orderItem";
+import AuthUser from "@/middleware/Auth";
+import Order from "@/models/orders";
+import { NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export const dynamic = "force-dynamic";
+
+export async function POST(req) {
   try {
     await connectDB();
-    const { orderItems, shippingAddress, user, totalPrice } = await req.json();
-
-    const createdOrderItems = await Promise.all(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      orderItems.map(async (item: any) => {
-        const newItem = new OrderItem({
-          product: item.product,
-          quantity: item.quantity,
-        });
-        return await newItem.save();
-      })
-    );
-
-    const order = new Order({
-      orderItems: createdOrderItems.map(item => item._id),
-      shippingAddress,
-      user,
-      totalPrice,
-    });
-
-    const savedOrder = await order.save();
-    return NextResponse.json(savedOrder, { status: 201 });
+    const isAuthUser = await AuthUser(req);
+    if (isAuthUser) {
+      const data = await req.json();
+      const { userID, items, totalAmount, shippingAddress } = data;
+      const order = await Order.create({
+        userID,
+        items,
+        totalAmount,
+        shippingAddress,
+        status: "pending",
+      });
+      return NextResponse.json({
+        success: true,
+        message: "Đặt hàng thành công!",
+        data: order,
+      });
+    } else {
+      return NextResponse.json({
+        success: false,
+        message: "Bạn chưa được xác thực!",
+      });
+    }
   } catch (error) {
-    console.error("Order creation error:", error);
-    return NextResponse.json({ error: "Failed to place order" }, { status: 500 });
+    console.error("Error creating order:", error);
+    return NextResponse.json({
+      success: false,
+      message: "Có lỗi xảy ra, vui lòng thử lại!",
+    });
   }
 }

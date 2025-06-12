@@ -7,6 +7,7 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { IoMdCloseCircle } from "react-icons/io";
 import Link from "next/link";
+import { useCart } from "@/context/CartContext";
 
 interface Product {
   productImage: string;
@@ -21,6 +22,7 @@ const ProductCard: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalImage, setModalImage] = useState<string>("");
   const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
+  const { updateCartCount } = useCart();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -50,8 +52,28 @@ const ProductCard: React.FC = () => {
     setModalImage("");
   };
 
-  const addCart = () => {
-    toast.success("Đã Thêm vào giỏ hàng!");
+  const addCart = async (product: Product, quantity: number) => {
+    const userID = localStorage.getItem("userID");
+    if (!userID) {
+      toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng!");
+      return;
+    }
+    const res = await fetch("/api/cart/add-to-cart", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ productID: product.productcode, userID, quantity }),
+      credentials: 'include',
+    });
+    const data = await res.json();
+    if (data.success) {
+      toast.success("Đã Thêm vào giỏ hàng!");
+      // Cập nhật lại số lượng trên icon
+      const cartRes = await fetch(`/api/cart/all-cart-items?_id=${userID}`);
+      const cartData = await cartRes.json();
+      if (cartData.success) updateCartCount(cartData.data.length);
+    } else {
+      toast.error(data.message || "Thêm vào giỏ hàng thất bại!");
+    }
   };
 
   return (
@@ -133,18 +155,19 @@ const ProductCard: React.FC = () => {
                     </small>
                   )}
                 </div>
-                <div className="d-flex flex gap-2 align-items-center mb-3">
+                <div className="d-flex flex gap-2 align-items-center mb-3 text-center justify-center w-full max-[300px]:">
                   <Input
                     type="number"
                     min={1}
                     value={quantities[index] || 1}
                     onChange={e => handleQuantityChange(index, Math.max(1, Number(e.target.value)))}
-                    className="form-control form-control-sm w-50 rounded-pill border-2 border-primary"
+                    className="form-control form-control-sm w-50 rounded-pill border-2 border-primary text-center justify-center 
+                    align-items-center"
                     style={{ fontSize: 16, background: '#f8f9fa' }}
                   />
                 </div>
                 <Button
-                  onClick={addCart}
+                  onClick={() => addCart(product, quantities[index] || 1)}
                   className="w-100 d-flex align-items-center justify-content-center gap-2 fw-semibold rounded-pill py-2 mt-auto product-cart-btn"
                   style={{
                     fontSize: 17,

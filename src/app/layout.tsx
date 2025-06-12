@@ -7,6 +7,7 @@ import GlobalState from "@/context/page";
 import Navbar from "@/components/Navbar/page";
 import { AuthProvider } from "@/context/auth";
 import { ToastContainer } from 'react-toastify';
+import { CartProvider } from "@/context/CartContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,11 +36,13 @@ export default function RootLayout({
       >
          <AuthProvider>
         <GlobalState>  
-          <Navbar/>
-       <main className="flex min-h-screen flex-col mt-[65px]"> {children}
-        <ToastContainer position="top-right" autoClose={3000} />
-       </main>
-        <Footer/>
+          <CartProvider>
+            <Navbar/>
+            <main className="flex min-h-screen flex-col mt-[65px]"> {children}
+              <ToastContainer position="top-right" autoClose={3000} />
+            </main>
+            <Footer/>
+          </CartProvider>
         </GlobalState>
          </AuthProvider>
       </body>

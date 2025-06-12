@@ -34,10 +34,10 @@ export default function AdminAllProduct() {
     }
   };
 
-  const handleDelete = async (_id: string) => {
+  const handleDelete = async (productcode: string) => {
     if (window.confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
       try {
-        const response = await fetch(`/api/products/[id]${_id}`, {
+        const response = await fetch(`/api/products/${productcode}`, {
           method: 'DELETE',
         });
         if (response.ok) {
@@ -49,8 +49,8 @@ export default function AdminAllProduct() {
     }
   };
 
-  const handleEdit = (id: string) => {
-    router.push(`/admin/products/edit-product/${id}`);
+  const handleEdit = (productcode: string) => {
+    router.push(`/admin/products/edit-product/${productcode}`);
   };
 
   return (
@@ -126,14 +126,14 @@ export default function AdminAllProduct() {
                 <td className="px-6 py-4">
                   <div className="flex gap-2">
                     <button
-                      onClick={() => handleEdit(product._id)}
+                      onClick={() => handleEdit(product.productcode)}
                       className="bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-1 rounded-lg shadow hover:scale-105 hover:from-blue-600 hover:to-blue-800 transition-all duration-150"
                       style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "18px", fontWeight: "bold"}}
                     >
                       Sửa
                     </button>
                     <button
-                      onClick={() => handleDelete(product._id)}
+                      onClick={() => handleDelete(product.productcode)}
                       className="bg-gradient-to-r from-red-500 to-red-700 text-white px-4 py-1 rounded-lg shadow hover:scale-105 hover:from-red-600 hover:to-red-800 transition-all duration-150"
                       style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "18px", fontWeight: "bold"}}
                     >

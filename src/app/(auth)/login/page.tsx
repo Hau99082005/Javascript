@@ -14,6 +14,7 @@ import Cookies from 'js-cookie';
 import { GlobalContext } from '@/context/page';
 import { toast } from 'react-toastify';
 
+
 const initialFormdata = {
   email: '',
   password: '',
@@ -72,6 +73,7 @@ export default function Page() {
         setFormData(initialFormdata);
         Cookies.set('token', res?.finalData?.token);
         localStorage.setItem('user', JSON.stringify(res?.finalData?.user));
+        localStorage.setItem('userID', res?.finalData?.user?._id);
         toast.success('Đăng nhập thành công!');
         router.push('/');
       } else {

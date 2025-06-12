@@ -19,6 +19,7 @@ export async function POST(request: Request) {
     const product = await Product.create(body);
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    console.error("POST /api/products error:", error);
+    return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
   }
 }

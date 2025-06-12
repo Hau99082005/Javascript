@@ -18,10 +18,11 @@ interface Product {
   subcategory: string;
   popular: boolean;
   recommend: boolean;
+  productcode: string;
 }
 
 export default function EditProduct() {
-  const { id } = useParams() as { id: string };
+  const { productcode } = useParams() as { productcode: string };
   const router = useRouter();
 
   const [formData, setFormData] = useState<Product>({
@@ -38,20 +39,31 @@ export default function EditProduct() {
     subcategory: "",
     popular: false,
     recommend: false,
+    productcode: "",
   });
 
   useEffect(() => {
-    if (id) fetchProduct();
-  }, [id]);
+    if (productcode) fetchProduct();
+  }, [productcode]);
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`/api/products/${id}`);
+      const response = await fetch(`/api/products/${productcode}`);
+      if (response.status === 404) {
+        alert("Sản phẩm không tồn tại hoặc đã bị xóa!");
+        router.push("/admin/products/all-products");
+        return;
+      }
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        throw new Error("Server trả về dữ liệu không hợp lệ!");
+      }
       const data = await response.json();
       setFormData(data);
     } catch (error) {
       console.error("Error fetching product:", error);
+      alert("Lỗi máy chủ!");
     }
   };
 
@@ -68,7 +80,7 @@ export default function EditProduct() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/products/${id}`, {
+      const response = await fetch(`/api/products/${productcode}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

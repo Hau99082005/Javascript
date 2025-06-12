@@ -23,6 +23,12 @@ interface ProductProps {
   };
 }
 
+
+ const addCart = () => {
+  toast.success("Thêm giỏ hàng thành công!");
+ }
+
+
 export default function ProductDetail({ product }: ProductProps) {
   const [quantity, setQuantity] = useState(1);
   const increaseQuantity = () => setQuantity((prev) => prev + 1);
@@ -141,7 +147,7 @@ export default function ProductDetail({ product }: ProductProps) {
 
           <div className="flex gap-4 mb-8">
             <button 
-              onClick={addtoCart}
+              onClick={() => addCart()}
               className="flex-1 flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors duration-200"
               style={{border: "none", borderRadius: "5px"}}
             >

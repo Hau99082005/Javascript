@@ -9,6 +9,7 @@ import { navOptions } from "@/utils";
 import { FaBell, FaSearch, FaShoppingCart } from "react-icons/fa";
 import AuthButtons from "../auth-buttons";
 import { GlobalContext } from "@/context/page";
+import { useCart } from "@/context/CartContext";
 
 
 export default function Navbar() {
@@ -19,6 +20,7 @@ export default function Navbar() {
   const searchBoxRef = useRef<HTMLDivElement>(null);
   const { showNavModal, setShowNavModal } = useContext(GlobalContext) || {};
   const router = useRouter();
+  const { cartCount } = useCart();
     
  
   const toggleMenu = () => {
@@ -109,9 +111,14 @@ export default function Navbar() {
             <Link
               href={'/cart'}
               style={{ textDecoration: "none" }}
-              className="text-sm bg-transparent text-gray-600 border-b px-4 py-2 rounded-md uppercase hover:text-red-600 transition-colors duration-200"
+              className="relative text-sm bg-transparent text-gray-600 border-b px-4 py-2 rounded-md uppercase hover:text-red-600 transition-colors duration-200"
             >
               <FaShoppingCart style={{ width: "20px", height: "20px", color: "gray" }} />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full px-2">
+                  {cartCount}
+                </span>
+              )}
             </Link>
             <Link
               href={'/cart'}
