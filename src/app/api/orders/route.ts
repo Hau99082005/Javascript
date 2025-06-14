@@ -1,6 +1,6 @@
 import connectDB from "@/lib/mongodb";
 import AuthUser from "@/middleware/Auth";
-import Order from "@/models/orders";
+import Order from "@/models/order";
 import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
