@@ -1,15 +1,9 @@
-// src/app/admin/banners/edit-banners/[id]/EditBannerClient.tsx
-'use client';
-
+"use client";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { FaSave, FaTimes } from "react-icons/fa";
-
-interface Props {
-  id: string;
-}
 
 interface Banner {
   _id: string;
@@ -17,7 +11,7 @@ interface Banner {
   desc: string;
 }
 
-export default function EditBannerClient({ id }: Props) {
+export default function EditBanner({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [formData, setFormData] = useState<Banner>({
     _id: "",
@@ -27,11 +21,11 @@ export default function EditBannerClient({ id }: Props) {
 
   useEffect(() => {
     fetchBanner();
-  }, [id]);
+  }, [params.id]);
 
   const fetchBanner = async () => {
     try {
-      const response = await fetch(`/api/banners/${id}`);
+      const response = await fetch(`/api/banners/${params.id}`);
       const data = await response.json();
       setFormData(data);
     } catch (error) {
@@ -52,7 +46,7 @@ export default function EditBannerClient({ id }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/banners/${id}`, {
+      const response = await fetch(`/api/banners/${params.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -78,13 +72,13 @@ export default function EditBannerClient({ id }: Props) {
     <div className="flex justify-center items-start p-8">
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8 border">
         <h1 className="text-3xl font-semibold mb-6 text-gray-800"
-          style={{ fontFamily: "Lato", fontSize: "25px", fontWeight: "bolder" }}>
+        style={{fontFamily: "Lato", fontSize: "25px", fontWeight: "bolder"}}>
           🖼️ Sửa Banner
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-700"
-              style={{ fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder" }}>
+             style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}>
               Link hình ảnh
             </label>
             <Input
@@ -99,7 +93,7 @@ export default function EditBannerClient({ id }: Props) {
           </div>
           <div>
             <label className="block mb-2 text-sm font-medium text-gray-700"
-              style={{ fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder" }}>
+             style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}>
               Mô tả
             </label>
             <Textarea
@@ -116,14 +110,14 @@ export default function EditBannerClient({ id }: Props) {
             <button
               type="submit"
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition duration-200"
-              style={{ border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder" }}>
+              style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}>
               <FaSave /> Cập nhật
             </button>
             <button
               type="button"
               onClick={() => router.push("/admin/banners/all-banners")}
               className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg transition duration-200"
-              style={{ border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder" }}
+              style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}
             >
               <FaTimes /> Hủy
             </button>
