@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { registerNewUser } from '@/services/register/user';
 import { toast } from 'react-toastify';
 
-export const registrationFormControls = [
+const registrationFormControls = [
   {
     id: 'name',
     label: 'Họ và tên',
