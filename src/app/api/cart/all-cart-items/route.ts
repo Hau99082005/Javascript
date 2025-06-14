@@ -1,8 +1,7 @@
 import connectDB from "@/lib/mongodb";
-import AuthUser from "@/middleware/Auth";
 import Cart from "@/models/cart";
 import { NextResponse } from "next/server";
-import { URL } from "url";
+import { User } from "@/models/user";
 import mongoose from "mongoose";
 
 export const dynamic = "force-dynamic";
@@ -10,55 +9,40 @@ export const dynamic = "force-dynamic";
 export async function GET(req) {
     try {
         await connectDB();
-        const isAuthUser = await AuthUser(req);
-        if(isAuthUser) {
-            const {searchParams} = new URL(req.url);
-            const id = searchParams.get('_id');
-            console.log('userID from query:', id);
-            if(!id) return NextResponse.json({
-                success: false,
-                message: "Vui lòng đăng nhập!",
+        const { searchParams } = new URL(req.url);
+        const id = searchParams.get('id');
+        if (!id) return NextResponse.json({
+            success: false,
+            message: 'Vui lòng cung cấp ID người dùng!',
+        });
+        const extractAllCartItems = await Cart.find({ userID: id })
+            .populate('userID')
+            .populate('productID', 'productName productImage productPrice productPriceOld'); // Specify fields to populate
+        if (extractAllCartItems && extractAllCartItems.length > 0) {
+            return NextResponse.json({
+                success: true,
+                data: extractAllCartItems
             });
-            let objectId;
-            try {
-                objectId = new mongoose.Types.ObjectId(id);
-            } catch (err) {
-                console.log('Invalid userID:', id);
-                return NextResponse.json({
-                    success: false,
-                    message: "userID không hợp lệ!",
-                });
-            }
-            const extracAllCartItems = await Cart.find({userID: objectId}).populate('userID').populate('ProductID');
-            console.log('Cart items found:', extracAllCartItems);
-            if(extracAllCartItems && extracAllCartItems.length > 0) {
-                extracAllCartItems.forEach(item => {
-                    console.log("Cart Item:");
-                    console.log("User ID:", item.userID?._id || "N/A");
-                    console.log("Product ID:", item.ProductID?._id || "N/A");
-                });
-                return NextResponse.json({
-                    success: true,
-                    data: extracAllCartItems,
-                });
-            }else {
-                return NextResponse.json({
-                    success: false,
-                    message: "Không tìm thấy mục nào trong Giỏ hàng!",
-                    status: 204,
-                });
-            }
         } else {
             return NextResponse.json({
                 success: false,
-                message: "Bạn chưa được xác thực",
+                message: "Giỏ hàng của bạn rỗng!",
+                status: 204
             });
         }
-    } catch(e) {
-        console.error("Lỗi lấy giỏ hàng:", e);
+    } catch (e) {
+        console.error(e); // Log error for debugging
         return NextResponse.json({
             success: false,
-            message: "Có lỗi xảy ra! vui lòng thử lại",
+            message: "Đã xảy ra lỗi! vui lòng thử lại",
         });
     }
+}
+
+export async function updateCartItemQuantity(cartItemId: string, quantity: number) {
+    await connectDB();
+    await Cart.findByIdAndUpdate(
+        new mongoose.Types.ObjectId(cartItemId),
+        { $set: { quantity } }
+    );
 }

@@ -1,31 +1,78 @@
-import Cart from '@/models/cart';
-import express from 'express';
-import mongoose from 'mongoose';
+export const addToCart = async (formData) => {
+  try {
+    const res = await fetch('/api/cart/add-to-cart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
 
-const cartRoute = express.Router();
+    const data = await res.json();
 
-cartRoute.post('/api/cart/add-to-cart', async(req, res) => {
-    try {
-        const {userID, productID, quantity} = req.body;
-    if(!userID || !productID || !quantity) {
-        return res.status(400).json({message: "Missing required fields"});
-    } 
-    const cart = new Cart({userID, productID, quantity});
-    await cart.save();
-    res.status(200).json(cart);
-    }catch(e: any) {
-        res.status(500).json({error: e.message});
+    if (!res.ok) {
+      return {
+        success: false,
+        message: data.message || 'Có lỗi xảy ra! Vui lòng thử lại',
+      };
     }
-})
 
-cartRoute.get('/api/cart/all-cart-items', async(req, res) => {
-   try {
-      const cart = await Cart.find();
-      res.status(200).json(cart);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
-      res.status(500).json({ error: e.message });
+    return data;
+  } catch (error) {
+    console.error('Add to cart error:', error);
+    return {
+      success: false,
+      message: 'Có lỗi xảy ra! Vui lòng thử lại',
+    };
+  }
+};
+
+export const getAllCartItems = async (id) => {
+  try {
+    const res = await fetch(`/api/cart/all-cart-items?id=${id}`, {
+      method: 'GET',
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return {
+        success: false,
+        message: data.message || 'Có lỗi xảy ra! Vui lòng thử lại',
+      };
     }
-});
 
-export default cartRoute;
+    return data;
+  } catch (error) {
+    console.error('Get cart items error:', error);
+    return {
+      success: false,
+      message: 'Có lỗi xảy ra! Vui lòng thử lại',
+    };
+  }
+};
+
+export const deleteFromCart = async (id) => {
+  try {
+    const res = await fetch(`/api/cart/delete-from-cart?id=${id}`, {
+      method: 'DELETE',
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      return {
+        success: false,
+        message: data.message || 'Có lỗi xảy ra! Vui lòng thử lại',
+      };
+    }
+
+    return data;
+  } catch (error) {
+    console.error('Delete from cart error:', error);
+    return {
+      success: false,
+      message: 'Có lỗi xảy ra! Vui lòng thử lại',
+    };
+  }
+};

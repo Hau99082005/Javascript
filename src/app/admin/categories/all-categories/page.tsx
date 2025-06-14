@@ -7,6 +7,7 @@ import { ArrowBigLeft } from "lucide-react";
 
 interface Category {
   _id: string;
+  id: String;
   name: string;
   image: string;
   desc: string;
@@ -79,6 +80,7 @@ export default function AdminAllCategory() {
         <table className="min-w-full bg-white border border-gray-200 rounded-xl">
           <thead>
             <tr className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900 uppercase text-sm">
+              <th className="px-6 py-4 text-left">id</th>
               <th className="px-6 py-4 text-left">Hình ảnh</th>
               <th className="px-6 py-4 text-left">Tên Danh Mục</th>
               <th className="px-6 py-4 text-left">Mô Tả</th>
@@ -91,6 +93,7 @@ export default function AdminAllCategory() {
                 key={category._id}
                 className="border-t border-gray-200 hover:bg-blue-50 transition"
               >
+                <td className="px-6 py-4 font-medium text-gray-800">{category.id}</td>
                 <td className="px-6 py-4">
                   <div className="w-14 h-14 relative">
                     {category.image ? (

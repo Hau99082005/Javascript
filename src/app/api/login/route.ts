@@ -1,9 +1,9 @@
-import connectToDB from "@/database/data";
-import { User } from "@/models/user";
 import Joi from "joi";
 import { NextResponse } from "next/server";
 import { compare } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { User } from "@/models/user";
+import connectDB from "@/lib/mongodb";
 
 const schema = Joi.object({
     email: Joi.string().email().required(),
@@ -13,7 +13,7 @@ const schema = Joi.object({
 export const dynamic = "force-dynamic";
 
 export async function POST(req) {
-    await connectToDB();
+    await connectDB();
 
     const { email, password } = await req.json();
     const { error } = schema.validate({ email, password });
@@ -33,7 +33,7 @@ export async function POST(req) {
                 message: "Thông tin đăng nhập không chính xác",
             }, { status: 401 });
         }
-        const checkPassword = await compare(password, checkUser.password);
+        const checkPassword = await compare(password, checkUser.password!);
         if (!checkPassword) {
             return NextResponse.json({
                 success: false,
@@ -45,7 +45,7 @@ export async function POST(req) {
             id: checkUser._id,
             email: checkUser.email,
             role: checkUser.role,
-        }, process.env.JWT_SECRET, { 
+        }, process.env.JWT_SECRET || "default_secret_key", { 
             expiresIn: '1d',
             algorithm: 'HS256'
         });

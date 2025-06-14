@@ -6,12 +6,12 @@ const categoryRoute = express.Router();
 // POST: Create a category
 categoryRoute.post('/api/categories', async (req, res) => {
   try {
-    const { name, image, desc } = req.body;
-    if (!name || !image || !desc) {
+    const {id, name, image, desc } = req.body;
+    if (!id || !name || !image || !desc) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
-    const category = new Category({ name, image, desc });
+    const category = new Category({ id,name, image, desc });
     await category.save();
     res.status(201).json(category);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

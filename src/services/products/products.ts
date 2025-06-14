@@ -17,8 +17,7 @@ productRoute.post('/api/products', async (req: Request, res: Response) => {
       actor,
       pages,
       description,
-      category,
-      subcategory,
+      id_category,
       popular,
       recommend
     } = req.body;
@@ -35,8 +34,7 @@ productRoute.post('/api/products', async (req: Request, res: Response) => {
       actor,
       pages,
       description,
-      category,
-      subcategory,
+      id_category,
       popular,
       recommend
     });

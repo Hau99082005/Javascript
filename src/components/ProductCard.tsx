@@ -1,6 +1,6 @@
 // src/components/ProductCard.tsx
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { FaShoppingCart, FaEye, FaSearchPlus } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { Button } from "./ui/button";
@@ -8,8 +8,12 @@ import { Input } from "./ui/input";
 import { IoMdCloseCircle } from "react-icons/io";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { addToCart } from "@/services/cart/cart";
+import { GlobalContext } from "@/context/page";
+import Cookies from 'js-cookie';
 
 interface Product {
+  _id: string; // Ensure _id is included
   productImage: string;
   productName: string;
   productPrice: number;
@@ -20,6 +24,7 @@ interface Product {
 const ProductCard: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [showModal, setShowModal] = useState(false);
+  const { user } = useContext(GlobalContext);
   const [modalImage, setModalImage] = useState<string>("");
   const [quantities, setQuantities] = useState<{ [key: number]: number }>({});
   const { updateCartCount } = useCart();
@@ -52,29 +57,33 @@ const ProductCard: React.FC = () => {
     setModalImage("");
   };
 
-  const addCart = async (product: Product, quantity: number) => {
-    const userID = localStorage.getItem("userID");
-    if (!userID) {
+  async function handleAddToCart(product: Product, index: number) {
+    if (!user?._id) {
       toast.error("Vui lòng đăng nhập để thêm vào giỏ hàng!");
       return;
     }
-    const res = await fetch("/api/cart/add-to-cart", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ productID: product.productcode, userID, quantity }),
-      credentials: 'include',
-    });
-    const data = await res.json();
-    if (data.success) {
-      toast.success("Đã Thêm vào giỏ hàng!");
-      // Cập nhật lại số lượng trên icon
-      const cartRes = await fetch(`/api/cart/all-cart-items?_id=${userID}`);
-      const cartData = await cartRes.json();
-      if (cartData.success) updateCartCount(cartData.data.length);
-    } else {
-      toast.error(data.message || "Thêm vào giỏ hàng thất bại!");
+
+    try {
+      const quantity = quantities[index] || 1;
+      const res = await addToCart({
+        productID: product._id,
+        userID: user._id,
+        quantity,
+      });
+
+      if (res.success) {
+        toast.success(res.message);
+        if (res.cartCount !== undefined) {
+          updateCartCount(res.cartCount);
+        }
+      } else {
+        toast.error(res.message || "Thêm vào giỏ hàng thất bại!");
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
+      toast.error("Có lỗi xảy ra! Vui lòng thử lại.");
     }
-  };
+  }
 
   return (
     <>
@@ -112,24 +121,27 @@ const ProductCard: React.FC = () => {
                     height={220}
                   />
                 </Link>
-                <Link href={`/products/${encodeURIComponent(product.productcode)}`}
+                <Link
+                  href={`/products/${encodeURIComponent(product.productcode)}`}
                   className="btn btn-light position-absolute top-0 end-0 m-2 rounded-circle shadow d-flex align-items-center justify-content-center product-icon-hover"
-                  style={{ width: 42, height: 42, zIndex: 2, border: '2px solid #eee' }}
+                  style={{ width: 42, height: 42, zIndex: 2, border: "2px solid #eee" }}
                   title="Xem chi tiết"
                 >
                   <FaEye size={20} color="#e74c3c" />
                 </Link>
                 <button
                   className="btn btn-light position-absolute top-0 start-0 m-2 rounded-circle shadow d-flex align-items-center justify-content-center product-icon-hover"
-                  style={{ width: 42, height: 42, zIndex: 2, border: '2px solid #eee' }}
+                  style={{ width: 42, height: 42, zIndex: 2, border: "2px solid #eee" }}
                   title="Phóng to ảnh"
-                  onClick={() => handleZoom(
-                    product.productImage.startsWith("http")
-                      ? product.productImage
-                      : product.productImage.startsWith("/")
-                      ? product.productImage
-                      : "/" + product.productImage
-                  )}
+                  onClick={() =>
+                    handleZoom(
+                      product.productImage.startsWith("http")
+                        ? product.productImage
+                        : product.productImage.startsWith("/")
+                        ? product.productImage
+                        : "/" + product.productImage
+                    )
+                  }
                 >
                   <FaSearchPlus size={20} color="#2980d9" />
                 </button>
@@ -143,15 +155,12 @@ const ProductCard: React.FC = () => {
                   {product.productName}
                 </h6>
                 <div className="d-flex align-items-center gap-2 mb-3">
-                 <span className="text-danger fw-bold" style={{ fontSize: 20 }}>
-                      {product.productPrice.toLocaleString('de-DE')}đ
+                  <span className="text-danger fw-bold" style={{ fontSize: 20 }}>
+                    {product.productPrice.toLocaleString("de-DE")}đ
                   </span>
                   {product.productPriceOld && (
-                    <small
-                      className="text-muted text-decoration-line-through"
-                      style={{ fontSize: 15 }}
-                    >
-                      {product.productPriceOld.toLocaleString('de-DE')}đ
+                    <small className="text-muted text-decoration-line-through" style={{ fontSize: 15 }}>
+                      {product.productPriceOld.toLocaleString("de-DE")}đ
                     </small>
                   )}
                 </div>
@@ -160,14 +169,13 @@ const ProductCard: React.FC = () => {
                     type="number"
                     min={1}
                     value={quantities[index] || 1}
-                    onChange={e => handleQuantityChange(index, Math.max(1, Number(e.target.value)))}
-                    className="form-control form-control-sm w-50 rounded-pill border-2 border-primary text-center justify-center 
-                    align-items-center"
-                    style={{ fontSize: 16, background: '#f8f9fa' }}
+                    onChange={(e) => handleQuantityChange(index, Math.max(1, Number(e.target.value)))}
+                    className="form-control form-control-sm w-50 rounded-pill border-2 border-primary text-center justify-center align-items-center"
+                    style={{ fontSize: 16, background: "#f8f9fa" }}
                   />
                 </div>
                 <Button
-                  onClick={() => addCart(product, quantities[index] || 1)}
+                  onClick={() => handleAddToCart(product, index)}
                   className="w-100 d-flex align-items-center justify-content-center gap-2 fw-semibold rounded-pill py-2 mt-auto product-cart-btn"
                   style={{
                     fontSize: 17,
@@ -209,9 +217,8 @@ const ProductCard: React.FC = () => {
           }
         `}</style>
       </div>
-      {/* Modal phóng to ảnh */}
       {showModal && (
-        <div className="modal fade show d-block" tabIndex={-1} style={{ background: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal fade show d-block" tabIndex={-1} style={{ background: "rgba(0,0,0,0.5)" }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content bg-transparent border-0">
               <div className="modal-body d-flex flex-column align-items-center justify-content-center p-0">
@@ -220,7 +227,7 @@ const ProductCard: React.FC = () => {
                   alt="Ảnh phóng to"
                   width={600}
                   height={450}
-                  style={{ objectFit: 'contain', borderRadius: 16, background: '#fff', boxShadow: '0 8px 32px rgba(44,62,80,0.13)' }}
+                  style={{ objectFit: "contain", borderRadius: 16, background: "#fff", boxShadow: "0 8px 32px rgba(44,62,80,0.13)" }}
                 />
                 <Button className="btn btn-secondary mt-3 rounded-pill px-4" onClick={handleCloseModal} style={{ fontSize: 16 }}>
                   <IoMdCloseCircle width={30} height={30} />

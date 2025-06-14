@@ -26,6 +26,8 @@ interface GlobalContextType {
   setShowCartModal: (value: boolean) => void;
 }
 
+
+
 export const GlobalContext = createContext<GlobalContextType | null>(null);
 
 export default function GlobalState({ children }: { children: ReactNode }) {
@@ -109,3 +111,4 @@ export default function GlobalState({ children }: { children: ReactNode }) {
     </GlobalContext.Provider>
   );
 }
+  

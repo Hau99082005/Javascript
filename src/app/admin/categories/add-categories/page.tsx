@@ -8,6 +8,7 @@ import { FaPlusCircle } from "react-icons/fa";
 export default function AdminAddNewCategories() {
   const router = useRouter();
   const [formData, setFormData] = useState({
+    id: "",
     name: "",
     image: "",
     desc: "",
@@ -51,6 +52,19 @@ export default function AdminAddNewCategories() {
           Thêm Danh Mục Mới
         </h1>
         <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block mb-1 font-semibold text-gray-700">id</label>
+            <Input
+              type="text"
+              name="id"
+              value={formData.id}
+              onChange={handleChange}
+              placeholder="id..."
+              className="w-full p-2 border rounded focus:outline-none focus:ring focus:ring-blue-200"
+              required
+            />
+          </div>
+          <div></div>
           <div>
             <label className="block mb-1 font-semibold text-gray-700">Tên Danh Mục</label>
             <Input

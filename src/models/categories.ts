@@ -1,9 +1,11 @@
+// @/models/categories.js
 import mongoose from "mongoose";
 
 const categorySchema = new mongoose.Schema({
-  name: String,
-  image: String,
-  desc: String,
+  id: { type: String, required: true },
+  name: { type: String, required: true },
+  image: { type: String, required: true },
+  desc: { type: String, required: true },
 });
 
 const Category = mongoose.models.Category || mongoose.model("Category", categorySchema);
