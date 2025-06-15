@@ -48,6 +48,7 @@ export default function CartPage() {
       const data = await getAllCartItems(userID)
       if (data.success) {
         setCartItems(data.data)
+        localStorage.setItem("cartItems", JSON.stringify(data));
         updateCartCount(data.data.length)
         const initSel: Record<string, boolean> = {}
         data.data.forEach((i: CartItem) => (initSel[i._id] = true))

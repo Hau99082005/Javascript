@@ -588,8 +588,8 @@ export default function Account() {
                       fontFamily: 'Lato',
                       fontSize: '18px',
                       fontWeight: 'bold',
-                      border: "none",
-                      borderRadius: "10px"
+                      border: 'none',
+                      borderRadius: '10px',
                     }}
                   >
                     {componentLevelLoader &&
