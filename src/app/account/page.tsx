@@ -15,6 +15,32 @@ import ComponentLevelLoader from '@/components/Loader/componentlevel'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 
+const cities = [
+  'Hà Nội',
+  'Hồ Chí Minh',
+  'Đà Nẵng',
+  'Cần Thơ',
+  'Hải Phòng',
+  'Biên Hòa',
+  'Huế',
+  'Nha Trang',
+  'Buôn Ma Thuột',
+  'Quy Nhơn',
+]
+
+const countries = [
+  'Việt Nam',
+  'United States',
+  'United Kingdom',
+  'Canada',
+  'Australia',
+  'Germany',
+  'France',
+  'Japan',
+  'South Korea',
+  'Singapore',
+]
+
 export default function Account() {
   const {
     user,
@@ -162,8 +188,14 @@ export default function Account() {
                     />
                   ) : (
                     <div className="w-full h-full bg-gradient-to-br from-red-500 to-purple-600 flex items-center justify-center">
-                      <span className="text-4xl text-white font-bold uppercase"
-                      style={{fontFamily: "Lato", fontSize: "50px", fontWeight: "bold"}}>
+                      <span
+                        className="text-4xl text-white font-bold uppercase"
+                        style={{
+                          fontFamily: 'Lato',
+                          fontSize: '50px',
+                          fontWeight: 'bold',
+                        }}
+                      >
                         {user?.name?.charAt(7)}
                       </span>
                     </div>
@@ -186,21 +218,49 @@ export default function Account() {
                   disabled={isUploading}
                 />
               </div>
-              <h2 className="mt-4 text-2xl font-bold text-gray-900 uppercase"
-              style={{fontFamily: "Lato", fontWeight: "bold", fontSize: "25px"}}>
+              <h2
+                className="mt-4 text-2xl font-bold text-gray-900 uppercase"
+                style={{
+                  fontFamily: 'Lato',
+                  fontWeight: 'bold',
+                  fontSize: '25px',
+                }}
+              >
                 {user?.name}
               </h2>
-              <p className="text-gray-600 mb-2"
-              style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "lighter"}}>{user?.email}</p>
-              <span className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800"
-              style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "lighter"}}>
+              <p
+                className="text-gray-600 mb-2"
+                style={{
+                  fontFamily: 'Lato',
+                  fontSize: '20px',
+                  fontWeight: 'lighter',
+                }}
+              >
+                {user?.email}
+              </p>
+              <span
+                className="inline-flex items-center px-4 py-2 rounded-full text-sm font-medium bg-red-100 text-red-800"
+                style={{
+                  fontFamily: 'Lato',
+                  fontSize: '20px',
+                  fontWeight: 'lighter',
+                }}
+              >
                 {user?.role}
               </span>
             </div>
 
             <div className="flex justify-center mb-8">
-              <button className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors duration-200 shadow-sm"
-              style={{border: "none", borderRadius: "10px", fontWeight: "bold", fontFamily: "Lato", fontSize: "20px"}}>
+              <button
+                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors duration-200 shadow-sm"
+                style={{
+                  border: 'none',
+                  borderRadius: '10px',
+                  fontWeight: 'bold',
+                  fontFamily: 'Lato',
+                  fontSize: '20px',
+                }}
+              >
                 <svg
                   className="w-5 h-5 mr-2"
                   fill="none"
@@ -219,14 +279,26 @@ export default function Account() {
             </div>
             <div className="mt-12">
               <div className="flex justify-between items-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-900"
-                style={{fontFamily: "Lato", fontSize: "25px", fontWeight: "bold"}}>
+                <h2
+                  className="text-2xl font-bold text-gray-900"
+                  style={{
+                    fontFamily: 'Lato',
+                    fontSize: '25px',
+                    fontWeight: 'bold',
+                  }}
+                >
                   Địa chỉ của bạn
                 </h2>
                 <button
                   onClick={() => setShowAddressForm(!showAddressForm)}
                   className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors duration-200 shadow-sm"
-                 style={{border: "none", borderRadius: "10px", fontFamily: "Lato", fontSize: "20px"}}>
+                  style={{
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontFamily: 'Lato',
+                    fontSize: '20px',
+                  }}
+                >
                   <svg
                     className="w-5 h-5 mr-2"
                     fill="none"
@@ -255,8 +327,14 @@ export default function Account() {
                     >
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <p className="text-lg font-semibold text-gray-900 uppercase"
-                          style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}>
+                          <p
+                            className="text-lg font-semibold text-gray-900 uppercase"
+                            style={{
+                              fontFamily: 'Lato',
+                              fontSize: '20px',
+                              fontWeight: 'bolder',
+                            }}
+                          >
                             {item.name}
                           </p>
                           <div className="flex space-x-2">
@@ -265,7 +343,12 @@ export default function Account() {
                                 handleUpdateAddress(item)
                               }
                               className="p-2 text-indigo-600 hover:text-indigo-700 transition-colors duration-200
-                              bg-transparent" style={{fontSize: "30px", fontWeight: "bold", fontFamily: "Lato"}}
+                              bg-transparent"
+                              style={{
+                                fontSize: '30px',
+                                fontWeight: 'bold',
+                                fontFamily: 'Lato',
+                              }}
                             >
                               <svg
                                 className="w-8 h-8"
@@ -315,13 +398,44 @@ export default function Account() {
                             </button>
                           </div>
                         </div>
-                        <p className="text-gray-600" style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "lighter"}}>
-                         Địa Chỉ:  {item.address}
+                        <p
+                          className="text-gray-600"
+                          style={{
+                            fontFamily: 'Lato',
+                            fontSize: '20px',
+                            fontWeight: 'lighter',
+                          }}
+                        >
+                          Địa Chỉ: {item.address}
                         </p>
                         <div className="grid grid-cols-2 gap-2 text-sm text-gray-500">
-                          <p style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "lighter"}}>Thành phố: {item.city}</p>
-                          <p style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "lighter"}}>Quốc gia: {item.country}</p>
-                          <p style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "lighter"}}>Mã bưu chính: {item.postalCode}</p>
+                          <p
+                            style={{
+                              fontFamily: 'Lato',
+                              fontSize: '20px',
+                              fontWeight: 'lighter',
+                            }}
+                          >
+                            Thành phố: {item.city}
+                          </p>
+                          <p
+                            style={{
+                              fontFamily: 'Lato',
+                              fontSize: '20px',
+                              fontWeight: 'lighter',
+                            }}
+                          >
+                            Quốc gia: {item.country}
+                          </p>
+                          <p
+                            style={{
+                              fontFamily: 'Lato',
+                              fontSize: '20px',
+                              fontWeight: 'lighter',
+                            }}
+                          >
+                            Mã bưu chính: {item.postalCode}
+                          </p>
                         </div>
                       </div>
                     </div>
@@ -356,34 +470,128 @@ export default function Account() {
               </div>
             </div>
             {showAddressForm && (
-              <div className="mt-8 bg-gray-50 rounded-lg p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-6">
+              <div className="mt-8 bg-gray-50 rounded-lg p-6 shadow-lg">
+                <h3
+                  className="text-lg font-medium text-gray-900 mb-6"
+                  style={{
+                    fontFamily: 'Lato',
+                    fontSize: '24px',
+                    fontWeight: 'bold',
+                  }}
+                >
                   {currentEditedAddressId
                     ? 'Cập nhật địa chỉ'
                     : 'Thêm địa chỉ mới'}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {addNewAddressFormControls.map((controlItem) => (
-                    <InputComponent
-                      key={controlItem.id}
-                      type={controlItem.type}
-                      placeholder={controlItem.placeholder}
-                      label={controlItem.label}
-                      value={addressFormData[controlItem.id]}
-                      onChange={(value: string) =>
-                        setAddressFormData({
-                          ...addressFormData,
-                          [controlItem.id]: value,
-                        })
-                      }
-                    />
-                  ))}
+                  {addNewAddressFormControls.map((controlItem) => {
+                    if (controlItem.id === 'city') {
+                      return (
+                        <div
+                          key={controlItem.id}
+                          className="flex flex-col"
+                        >
+                          <label
+                            className="text-sm font-medium text-gray-700 mb-1"
+                            style={{
+                              fontFamily: 'Lato',
+                              fontSize: '16px',
+                            }}
+                          >
+                            {controlItem.label}
+                          </label>
+                          <select
+                            value={addressFormData[controlItem.id]}
+                            onChange={(e) =>
+                              setAddressFormData({
+                                ...addressFormData,
+                                [controlItem.id]: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200"
+                            style={{
+                              fontFamily: 'Lato',
+                              fontSize: '16px',
+                            }}
+                          >
+                            <option value="">Chọn thành phố</option>
+                            {cities.map((city) => (
+                              <option key={city} value={city}>
+                                {city}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )
+                    }
+                    if (controlItem.id === 'country') {
+                      return (
+                        <div
+                          key={controlItem.id}
+                          className="flex flex-col"
+                        >
+                          <label
+                            className="text-sm font-medium text-gray-700 mb-1"
+                            style={{
+                              fontFamily: 'Lato',
+                              fontSize: '16px',
+                            }}
+                          >
+                            {controlItem.label}
+                          </label>
+                          <select
+                            value={addressFormData[controlItem.id]}
+                            onChange={(e) =>
+                              setAddressFormData({
+                                ...addressFormData,
+                                [controlItem.id]: e.target.value,
+                              })
+                            }
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-200"
+                            style={{
+                              fontFamily: 'Lato',
+                              fontSize: '16px',
+                            }}
+                          >
+                            <option value="">Chọn quốc gia</option>
+                            {countries.map((country) => (
+                              <option key={country} value={country}>
+                                {country}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )
+                    }
+                    return (
+                      <InputComponent
+                        key={controlItem.id}
+                        type={controlItem.type}
+                        placeholder={controlItem.placeholder}
+                        label={controlItem.label}
+                        value={addressFormData[controlItem.id]}
+                        onChange={(value: string) =>
+                          setAddressFormData({
+                            ...addressFormData,
+                            [controlItem.id]: value,
+                          })
+                        }
+                      />
+                    )
+                  })}
                 </div>
                 <div className="mt-6">
                   <button
                     onClick={handleAddOrUpdateAddress}
-                    className="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors duration-200 shadow-sm"
-                  style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "bold", border: "none", borderRadius: "10px"}}>
+                    className="w-full sm:w-auto px-8 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-red-600 hover:bg-red-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                    style={{
+                      fontFamily: 'Lato',
+                      fontSize: '18px',
+                      fontWeight: 'bold',
+                      border: "none",
+                      borderRadius: "10px"
+                    }}
+                  >
                     {componentLevelLoader &&
                     componentLevelLoader.loading ? (
                       <ComponentLevelLoader

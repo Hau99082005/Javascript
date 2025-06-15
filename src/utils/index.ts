@@ -123,6 +123,32 @@ export const loginFormControls = [
     },
 ];
 
+const cities = [
+  'Hà Nội',
+  'Hồ Chí Minh',
+  'Đà Nẵng',
+  'Cần Thơ',
+  'Hải Phòng',
+  'Biên Hòa',
+  'Huế',
+  'Nha Trang',
+  'Buôn Ma Thuột',
+  'Quy Nhơn'
+]
+
+const countries = [
+  'Việt Nam',
+  'United States',
+  'United Kingdom',
+  'Canada',
+  'Australia',
+  'Germany',
+  'France',
+  'Japan',
+  'South Korea',
+  'Singapore'
+]
+
 /** Danh sách field cho form địa chỉ – type = "text" hợp lệ cho <input /> */
 export const addNewAddressFormControls = [
   {
@@ -139,15 +165,23 @@ export const addNewAddressFormControls = [
   },
   {
     id: "city",
-    type: "text",
+    type: "select",
     label: "Thành phố",
-    placeholder: "Nhập vào thành phố của bạn",
+    placeholder: "Chọn thành phố",
+    options: cities.map(city => ({
+      id: city,
+      label: city
+    }))
   },
   {
     id: "country",
-    type: "text",
+    type: "select",
     label: "Quốc gia",
-    placeholder: "Nhập vào quốc gia của bạn",
+    placeholder: "Chọn quốc gia",
+    options: countries.map(country => ({
+      id: country,
+      label: country
+    }))
   },
   {
     id: "postalCode",
