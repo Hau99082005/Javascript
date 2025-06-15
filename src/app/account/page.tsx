@@ -382,8 +382,8 @@ export default function Account() {
                 <div className="mt-6">
                   <button
                     onClick={handleAddOrUpdateAddress}
-                    className="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 transition-colors duration-200 shadow-sm"
-                  >
+                    className="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-red-600 hover:bg-red-700 transition-colors duration-200 shadow-sm"
+                  style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "bold", border: "none", borderRadius: "10px"}}>
                     {componentLevelLoader &&
                     componentLevelLoader.loading ? (
                       <ComponentLevelLoader

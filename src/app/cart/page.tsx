@@ -353,7 +353,7 @@ export default function CartPage() {
                     className="flex justify-between items-start text-sm"
                   >
                     <div className="flex-1 pr-4">
-                      <p className="font-medium text-gray-700" style={{ fontFamily: 'Lato' }}>
+                      <p className="font-medium text-gray-700" style={{ fontFamily: 'Lato', fontSize: "16px", fontWeight: "bold" }}>
                         {item.productID.productName}
                       </p>
                       <p className="text-gray-500 text-sm">
@@ -383,7 +383,7 @@ export default function CartPage() {
                     disabled={total === 0}
                     onClick={handleCheckout}
                     className="w-full bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 h-12 text-base font-semibold rounded-xl shadow-lg shadow-red-200"
-                    style={{ fontFamily: 'Lato', fontWeight: 'bold' }}
+                    style={{ fontFamily: 'Lato', fontWeight: 'bold', border: "none", borderRadius: "10px", fontSize: "20px" }}
                   >
                     THANH TOÁN
                   </Button>
@@ -393,6 +393,7 @@ export default function CartPage() {
                   style={{
                     fontFamily: 'Lato',
                     fontWeight: 'lighter',
+                    fontSize: '17px'
                   }}
                 >
                   (Giảm giá trên web chỉ áp dụng cho bán lẻ)
