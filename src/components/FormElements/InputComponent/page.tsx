@@ -1,33 +1,36 @@
-// components/FormElements/InputComponent/page.tsx
+"use client";
+
+import React from "react";
 
 export interface InputComponentProps {
   id?: string;
   type?: string;
   label: string;
   placeholder?: string;
-  onChange?: (value: string) => void;
-  value?: string;
+  onChange: (value: string) => void;   
+  value: string;
 }
 
 export default function InputComponent({
   label,
   placeholder,
-  type,
+  type = "text",
   onChange,
   value,
 }: InputComponentProps) {
   return (
     <div className="relative">
-      <p className="pt-0 pr-2 pb-0 pl-2 absolute -mt-3 ml-2 font-medium text-gray-600 bg-white">
+      <p className="absolute -top-2 left-3 bg-white px-1 text-sm font-medium text-gray-600">
         {label}
       </p>
+
       <input
+        type={type}
         placeholder={placeholder}
-        type={type || 'text'}
-        value={value ?? ''}
-        onChange={(e) => onChange?.(e.target.value)}
-        className="border placeholder-gray-300 focus:outline-none focus:border-black
-          w-full pt-4 pr-4 pb-4 pl-4 text-base block bg-white border-gray-500 rounded-lg"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}  
+        className="w-full rounded-lg border border-gray-500 bg-white p-4
+                   text-base placeholder-gray-300 focus:border-black focus:outline-none"
       />
     </div>
   );

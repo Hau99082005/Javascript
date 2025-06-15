@@ -126,13 +126,22 @@ export default function CartPage() {
 
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4 font-lato">Giỏ hàng trống</h1>
-        <Link href="/" className="text-red-600 hover:text-red-700 font-semibold text-lg"
-        style={{textDecoration: "none", color: "black", fontFamily: "Lato", fontSize: "18px", fontWeight: "lighter"}}>
-          Tiếp tục mua sắm
-        </Link>
-      </div>
+     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 text-center">
+  <h1 className="text-4xl font-bold text-gray-800 mb-6" style={{ fontFamily: 'Lato', fontSize: "30px", fontWeight: "bolder" }}>
+    🛒 Giỏ hàng của bạn đang trống!
+  </h1>
+  <p className="text-gray-500 mb-6 text-lg" style={{ fontFamily: 'Lato', fontSize: "20px", fontWeight: "lighter" }}>
+    Hãy khám phá thêm nhiều sản phẩm thú vị đang chờ bạn.
+  </p>
+  <Link
+    href="/"
+    className="px-6 py-3 bg-red-600 text-white text-lg rounded-full hover:bg-red-700 transition-all duration-300 shadow-md"
+    style={{ fontFamily: 'Lato', textDecoration: "none",fontSize: "20px", fontWeight: "bold" }}
+  >
+    Tiếp tục mua sắm
+  </Link>
+</div>
+
     );
   }
   return (
@@ -175,7 +184,9 @@ export default function CartPage() {
                     </div>
                     <div className="flex flex-col justify-between flex-1">
                       <h3 className="text-sm font-medium line-clamp-2 mb-1"
-                      style={{fontFamily: "Lato", fontWeight: "bolder", fontSize: "18px"}}>
+                      style={{fontFamily: "Lato", fontWeight: "bolder", fontSize: "18px", textDecoration: "none",
+                        color: "black"
+                      }}>
                         {item.productID.productName}
                       </h3>
                       <div className="text-xs text-gray-500 line-through" style={{fontFamily: "Lato", fontSize: "16px"}}>

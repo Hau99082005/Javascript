@@ -11,7 +11,11 @@ interface Banner {
   desc: string;
 }
 
-export default function EditBanner({ params }: { params: { id: string } }) {
+type PageProps = {
+  params: { id: string };
+};
+
+export default function EditBanner({ params }: PageProps) {
   const router = useRouter();
   const [formData, setFormData] = useState<Banner>({
     _id: "",
@@ -51,11 +55,7 @@ export default function EditBanner({ params }: { params: { id: string } }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          image: String(formData.image),
-          desc: String(formData.desc),
-        }),
+        body: JSON.stringify(formData), // Remove redundant String casting
       });
 
       if (response.ok) {
@@ -71,14 +71,26 @@ export default function EditBanner({ params }: { params: { id: string } }) {
   return (
     <div className="flex justify-center items-start p-8">
       <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8 border">
-        <h1 className="text-3xl font-semibold mb-6 text-gray-800"
-        style={{fontFamily: "Lato", fontSize: "25px", fontWeight: "bolder"}}>
+        <h1
+          className="text-3xl font-semibold mb-6 text-gray-800"
+          style={{
+            fontFamily: "Lato",
+            fontSize: "25px",
+            fontWeight: "bolder",
+          }}
+        >
           🖼️ Sửa Banner
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700"
-             style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}>
+            <label
+              className="block mb-2 text-sm font-medium text-gray-700"
+              style={{
+                fontFamily: "Lato",
+                fontSize: "20px",
+                fontWeight: "bolder",
+              }}
+            >
               Link hình ảnh
             </label>
             <Input
@@ -92,8 +104,14 @@ export default function EditBanner({ params }: { params: { id: string } }) {
             />
           </div>
           <div>
-            <label className="block mb-2 text-sm font-medium text-gray-700"
-             style={{fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}>
+            <label
+              className="block mb-2 text-sm font-medium text-gray-700"
+              style={{
+                fontFamily: "Lato",
+                fontSize: "20px",
+                fontWeight: "bolder",
+              }}
+            >
               Mô tả
             </label>
             <Textarea
@@ -110,14 +128,27 @@ export default function EditBanner({ params }: { params: { id: string } }) {
             <button
               type="submit"
               className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition duration-200"
-              style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}>
+              style={{
+                border: "none",
+                borderRadius: "5px",
+                fontFamily: "Lato",
+                fontSize: "20px",
+                fontWeight: "bolder",
+              }}
+            >
               <FaSave /> Cập nhật
             </button>
             <button
               type="button"
               onClick={() => router.push("/admin/banners/all-banners")}
               className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg transition duration-200"
-              style={{border: "none", borderRadius: "5px", fontFamily: "Lato", fontSize: "20px", fontWeight: "bolder"}}
+              style={{
+                border: "none",
+                borderRadius: "5px",
+                fontFamily: "Lato",
+                fontSize: "20px",
+                fontWeight: "bolder",
+              }}
             >
               <FaTimes /> Hủy
             </button>

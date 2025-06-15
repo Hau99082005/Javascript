@@ -1,114 +1,128 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-'use client';
+"use client";
 
-import { createContext, useEffect, useState, ReactNode } from 'react';
-import Cookies from 'js-cookie';
+import { createContext, useEffect, useState, ReactNode } from "react";
+import Cookies from "js-cookie";
 
 interface User {
-  email?: string;
-  name?: string;
   _id?: string;
+  name?: string;
+  email?: string;
   role?: string;
   displayName?: string;
   photoURL?: string;
 }
 
 interface GlobalContextType {
+
   showNavModal: boolean;
-  setShowNavModal: (value: boolean) => void;
-  isAuthUser: boolean | null;
-  setIsAuthUser: (value: boolean | null) => void;
-  user: User | null;
-  setUser: (user: User | null) => void;
-  currentUpdatedProduct: any;
-  setCurrentUpdatedProduct: (product: any) => void;
+  setShowNavModal: (v: boolean) => void;
   showCartModal: boolean;
-  setShowCartModal: (value: boolean) => void;
+  setShowCartModal: (v: boolean) => void;
+
+
+  isAuthUser: boolean | null;
+  setIsAuthUser: (v: boolean | null) => void;
+  user: User | null;
+  setUser: (u: User | null) => void;
+
+  currentUpdatedProduct: any;
+  setCurrentUpdatedProduct: (p: any) => void;
+
+ 
+  Addresses: any[];
+  setAddresses: (a: any[]) => void;
+  addressFormData: {
+    name: string;
+    city: string;
+    country: string;
+    postalCode: string;
+    address: string;
+  };
+  setAddressFormData: (
+    v: GlobalContextType["addressFormData"]
+  ) => void;
 }
 
-
-
-export const GlobalContext = createContext<GlobalContextType | null>(null);
+export const GlobalContext = createContext<GlobalContextType>(null!);
 
 export default function GlobalState({ children }: { children: ReactNode }) {
+
   const [showNavModal, setShowNavModal] = useState(false);
-  const [isAuthUser, setIsAuthUser] = useState<boolean | null>(null);
-  const [user, setUser] = useState<User | null>(null);
-  const [currentUpdatedProduct, setCurrentUpdatedProduct] = useState<any>(null);
   const [showCartModal, setShowCartModal] = useState(false);
 
+  const [isAuthUser, setIsAuthUser] = useState<boolean | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
+  const [currentUpdatedProduct, setCurrentUpdatedProduct] = useState<any>(null);
+  const [Addresses, setAddresses] = useState<any[]>([]);
+  const [addressFormData, setAddressFormData] = useState({
+    name: "",
+    city: "",
+    country: "",
+    postalCode: "",
+    address: "",
+  });
   useEffect(() => {
     const fetchUser = async () => {
-      const token = Cookies.get('token');
-      if (token) {
-        setIsAuthUser(true);
-        // Ưu tiên lấy user từ localStorage nếu có
-        const localUser = localStorage.getItem('user');
-        if (localUser) {
-          setUser(JSON.parse(localUser));
-        } else {
-          // Nếu không có thì gọi API /api/me
-          try {
-            const res = await fetch('/api/me', {
-              headers: { 
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json'
-              },
-              method: 'GET',
-            });
-            
-            if (!res.ok) {
-              throw new Error(`HTTP error! status: ${res.status}`);
-            }
-            
-            const contentType = res.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-              throw new Error('Response was not JSON');
-            }
-            
-            const data = await res.json();
-            if (data && data.user) {
-              setUser(data.user);
-              localStorage.setItem('user', JSON.stringify(data.user));
-            } else {
-              setUser(null);
-              setIsAuthUser(false);
-              localStorage.removeItem('user');
-            }
-          } catch (err) {
-            console.error('Error fetching user:', err);
-            setUser(null);
-            setIsAuthUser(false);
-            localStorage.removeItem('user');
-            Cookies.remove('token');
-          }
-        }
-      } else {
+      const token = Cookies.get("token");
+      if (!token) {
         setIsAuthUser(false);
         setUser(null);
-        localStorage.removeItem('user');
+        localStorage.removeItem("user");
+        return;
+      }
+
+      setIsAuthUser(true);
+      const localUser = localStorage.getItem("user");
+      if (localUser) {
+        setUser(JSON.parse(localUser));
+        return;
+      }
+
+      try {
+        const res = await fetch("/api/me", {
+          method: "GET",
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) throw new Error("Bad response");
+        const data = await res.json();
+        if (data?.user) {
+          setUser(data.user);
+          localStorage.setItem("user", JSON.stringify(data.user));
+        } else throw new Error("No user");
+      } catch (err) {
+        console.error(err);
+        setIsAuthUser(false);
+        setUser(null);
+        Cookies.remove("token");
+        localStorage.removeItem("user");
       }
     };
+
     fetchUser();
   }, []);
 
   return (
-    <GlobalContext.Provider 
-      value={{ 
-        showNavModal, 
-        setShowNavModal, 
-        isAuthUser, 
-        setIsAuthUser, 
-        user, 
+    <GlobalContext.Provider
+      value={{
+        showNavModal,
+        setShowNavModal,
+        showCartModal,
+        setShowCartModal,
+        isAuthUser,
+        setIsAuthUser,
+        user,
         setUser,
         currentUpdatedProduct,
         setCurrentUpdatedProduct,
-        showCartModal,
-        setShowCartModal
+        Addresses,
+        setAddresses,
+        addressFormData,
+        setAddressFormData,
       }}
     >
       {children}
     </GlobalContext.Provider>
   );
 }
-  

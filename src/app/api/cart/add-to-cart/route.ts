@@ -34,15 +34,12 @@ export async function POST(req) {
                 message: error.details[0].message
             }, { status: 400 });
         }
-
-        // Check if item already exists in cart
         const existingCartItem = await Cart.findOne({
             productID: productID,
             userID: userID
         });
 
         if (existingCartItem) {
-            // Update quantity if item exists
             existingCartItem.quantity += quantity;
             await existingCartItem.save();
             
@@ -52,8 +49,6 @@ export async function POST(req) {
                 cartCount: await Cart.countDocuments({ userID })
             });
         }
-
-        // Create new cart item
         const saveProductCart = await Cart.create({
             userID,
             productID,

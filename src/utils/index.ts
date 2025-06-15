@@ -122,3 +122,37 @@ export const loginFormControls = [
         label: "Mật khẩu",
     },
 ];
+
+/** Danh sách field cho form địa chỉ – type = "text" hợp lệ cho <input /> */
+export const addNewAddressFormControls = [
+  {
+    id: "name",
+    type: "text",
+    label: "Tên của bạn",
+    placeholder: "Nhập họ và tên",
+  },
+  {
+    id: "address",
+    type: "text",
+    label: "Địa chỉ",
+    placeholder: "Nhập vào địa chỉ của bạn",
+  },
+  {
+    id: "city",
+    type: "text",
+    label: "Thành phố",
+    placeholder: "Nhập vào thành phố của bạn",
+  },
+  {
+    id: "country",
+    type: "text",
+    label: "Quốc gia",
+    placeholder: "Nhập vào quốc gia của bạn",
+  },
+  {
+    id: "postalCode",
+    type: "text",
+    label: "Mã bưu chính",
+    placeholder: "Nhập vào mã bưu chính",
+  },
+];
