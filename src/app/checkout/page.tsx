@@ -1,14 +1,19 @@
-'use client'
-
+'use client';
 import { useContext, useEffect, useState } from 'react'
 import Image from 'next/image'
 import { GlobalContext } from '@/context/page'
 import { fetchAllAddresses } from '@/services/address/address'
 import { Button } from '@/components/ui/button'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { CirclePlus } from 'lucide-react'
+import { loadStripe } from '@stripe/stripe-js'
+import { callStripeSession } from '@/services/stripe/stripe'
+import { toast, ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import ReactLoading from 'react-loading';
+import { createNewOrder } from '@/services/order/order'
 
-export default function Checkout() {
+export default function CheckOut() {
   const {
     cartItems,
     Addresses,
@@ -16,11 +21,21 @@ export default function Checkout() {
     setAddresses,
     checkoutFormData,
     setCheckoutFormData,
+    setCartItems,
+    setUser,
   } = useContext(GlobalContext)
   const items = cartItems?.data ?? []
   const router = useRouter()
+  const params = useSearchParams()
+
+  const publishableKey =
+    'pk_test_51R7i72GXfpQH0gjneTCgmHqokzJC6GwE5KehiDX1PpaZMmUctvkDOmxn2oY9pPpeHRkNYjhUXGb2FhPVxyTvHLDz00guqNYASj'
+  const stripePromise = loadStripe(publishableKey)
+  console.log(stripePromise)
 
   const [selectedAddress, setSelectedAddress] = useState(null)
+  const [isOrderProccessing, setIsOrderProccessing] = useState(false)
+  const [orderSuccess, setOrderSuccess] = useState(false)
 
   console.log(cartItems)
 
@@ -39,6 +54,41 @@ export default function Checkout() {
 
   useEffect(() => {
     if (user !== null) getAllAddresses()
+  }, [user])
+
+  useEffect(() => {
+    async function fetchCart() {
+      if (user?._id) {
+        // Nếu đã đăng nhập, lấy cart từ API
+        try {
+          const res = await fetch(
+            `/api/cart/all-cart-items?_id=${user._id}`,
+          )
+          const data = await res.json()
+          if (data.success) {
+            setCartItems({ data: data.data, success: true })
+          }
+        } catch (err) {
+          console.error('Lỗi khi fetch cart:', err)
+        }
+      } else {
+        // Nếu chưa đăng nhập, lấy cart từ localStorage
+        const getCartItems = localStorage.getItem('cartItems')
+        if (getCartItems) {
+          try {
+            const parsed = JSON.parse(getCartItems)
+            if (parsed?.data && Array.isArray(parsed.data)) {
+              setCartItems(parsed)
+            } else if (Array.isArray(parsed)) {
+              setCartItems({ data: parsed, success: true })
+            }
+          } catch (err) {
+            console.error('Lỗi khi parse cartItems:', err)
+          }
+        }
+      }
+    }
+    fetchCart()
   }, [user])
 
   function handleSelectedAddress(getAddress) {
@@ -64,7 +114,222 @@ export default function Checkout() {
     })
   }
 
+  async function handleCheckout() {
+    try {
+      const stripe = await stripePromise
+      const baseUrl =
+        process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'
+      const lineItems = items.map((item) => {
+        let imageUrl = item.productID.productImage
+        let imageUrlFinal: string | undefined = undefined
+        if (imageUrl && typeof imageUrl === 'string') {
+          if (/^https?:\/\//i.test(imageUrl)) {
+            if (/^https:\/\//i.test(imageUrl)) {
+              imageUrlFinal = imageUrl
+            }
+          } else {
+            const fullUrl = `${baseUrl}${
+              imageUrl.startsWith('/') ? imageUrl : '/' + imageUrl
+            }`
+            if (/^https:\/\//i.test(fullUrl)) {
+              imageUrlFinal = fullUrl
+            }
+          }
+        }
+        const productData: { name: string; images?: string[] } = {
+          name: item.productID.productName,
+        }
+        if (imageUrlFinal) {
+          productData.images = [imageUrlFinal]
+        }
+        return {
+          price_data: {
+            currency: 'VND',
+            product_data: productData,
+            unit_amount: item.productID.productPrice,
+          },
+          quantity: item.quantity,
+        }
+      })
+
+      const response = await callStripeSession({
+        line_items: lineItems,
+        email: user?.email,
+        userId: user?._id,
+        shippingAddress: checkoutFormData.shippingAddress,
+        shippingRate: checkoutFormData.shippingRate,
+      })
+      console.log('Stripe session response:', response)
+      if (!response || !response.success || !response.id) {
+        throw new Error(
+          response?.message || 'Không thể tạo phiên thanh toán',
+        )
+      }
+
+      setIsOrderProccessing(true)
+      localStorage.setItem('stripe', 'true')
+      localStorage.setItem(
+        'checkoutFormData',
+        JSON.stringify(checkoutFormData),
+      )
+
+      const result = await stripe?.redirectToCheckout({
+        sessionId: response.id,
+      })
+
+      if (result?.error) {
+        console.error('Stripe checkout error:', result.error)
+        setIsOrderProccessing(false)
+      }
+    } catch (error) {
+      console.error('Error during checkout:', error)
+      setIsOrderProccessing(false)
+    }
+  }
+
+  useEffect(() => {
+    const createFinalOrder = async () => {
+      try {
+        const stripeData = localStorage.getItem('stripe')
+        const checkoutData = localStorage.getItem('checkoutFormData')
+
+        if (!stripeData || !checkoutData) return
+
+        const isStripe = JSON.parse(stripeData)
+        const getCheckoutFormData = JSON.parse(checkoutData)
+
+        if (
+          isStripe &&
+          params?.get('status') === 'success' &&
+          cartItems &&
+          cartItems.data &&
+          cartItems.data.length > 0
+        ) {
+          if (!user || !user._id) {
+            toast.error('Bạn cần đăng nhập để đặt hàng!')
+            setIsOrderProccessing(false)
+            return
+          }
+          setIsOrderProccessing(true)
+
+          const createFinalCheckoutFormData = {
+            user: user._id,
+            shippingAddress: getCheckoutFormData.shippingAddress,
+            orderItems: cartItems.data.map((item) => ({
+              qty: item.quantity,
+              product: item.productID,
+            })),
+            paymentMethod: 'Stripe',
+            totalPrice: items.reduce(
+              (total, item) =>
+                total +
+                (item.productID?.productPrice || 0) * item.quantity,
+              0,
+            ),
+            isPaid: true,
+            isProcessing: true,
+            paidAt: new Date(),
+          }
+
+          const res = await createNewOrder(
+            createFinalCheckoutFormData,
+          )
+
+          if (res.success) {
+            setOrderSuccess(true)
+            toast.success(res.message, {
+              position: 'top-right',
+            })
+          } else {
+            setOrderSuccess(false)
+            toast.error(res.message || 'Order failed', {
+              position: 'top-right',
+            })
+          }
+
+          setIsOrderProccessing(false)
+        }
+      } catch (err) {
+        console.error('Order creation failed:', err)
+        toast.error(
+          'Something went wrong while processing the order.',
+          {
+            position: 'top-right',
+          },
+        )
+        setIsOrderProccessing(false)
+      }
+    }
+
+    createFinalOrder()
+  }, [params?.get('status'), cartItems])
+
+  // Lấy lại user từ localStorage nếu bị null (sau redirect Stripe)
+  useEffect(() => {
+    if (!user) {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        try {
+          const userObj = JSON.parse(userStr);
+          if (userObj && userObj._id) {
+            setUser(userObj);
+          }
+        } catch (e) {}
+      }
+    }
+  }, [user, setUser]);
+
   console.log(checkoutFormData)
+
+  if (orderSuccess) {
+    return (
+      <section className="h-screen bg-gray-300">
+        <div className="mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto mt-8 max-w-screen-xl px-4 sm:px-6 lg:px-8">
+            <div className="bg-white shadow">
+              <div className="px-4 py-6 sm:px-8 sm:py-10 flex flex-col gap-5">
+                <h1 className="font-semibold text-xl"
+                 style={{fontFamily: "Lato", fontSize: "30px", fontWeight: "bolder"}}>
+                  Bạn đã thanh toán thành công!
+                </h1>
+                <Button
+                  onClick={() => {
+                    router.push('/account/orders')
+                    localStorage.removeItem('stripe')
+                    localStorage.removeItem('checkoutFormData')
+                  }}
+                  className="w-full mt-6 bg-red-600 hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transform transition-all duration-300 hover:scale-[1.02] text-lg font-semibold py-6"
+                  style={{
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontFamily: 'Lato',
+                    fontSize: '20px',
+                    fontWeight: 'bolder',
+                  }}
+                >
+                  Xem đơn hàng của bạn
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  if (isOrderProccessing) {
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center">
+        <ReactLoading
+          type="spin"
+          color="#000000"
+          height={30}
+          width={30}
+        />
+        <ToastContainer />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
@@ -145,10 +410,8 @@ export default function Checkout() {
                           ₫
                         </p>
                         <p className="text-gray-600 text-decoration-line-through font-semibold mt-1">
-                          {item.productID?.productPriceOld?.toLocaleString(
-                            'vi-VN',
-                          )}{' '}
-                          ₫
+                          {/* Nếu có productPriceOld thì hiển thị, còn không thì bỏ qua */}
+                          {/* {item.productID?.productPriceOld?.toLocaleString('vi-VN')} ₫ */}
                         </p>
                       </div>
                       <div className="mt-2 flex items-center">
@@ -453,8 +716,9 @@ export default function Checkout() {
                 </div>
 
                 <Button
+                  onClick={handleCheckout}
                   disabled={
-                    (cartItems && cartItems.length === 0) ||
+                    (items && items.length === 0) ||
                     Object.keys(checkoutFormData.shippingAddress)
                       .length === 0
                   }
@@ -474,6 +738,7 @@ export default function Checkout() {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   )
 }

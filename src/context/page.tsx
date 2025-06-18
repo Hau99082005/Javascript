@@ -35,7 +35,7 @@ interface GlobalContextType {
 
   currentUpdatedProduct: any
   setCurrentUpdatedProduct: (p: any) => void
-
+ 
   Addresses: any[]
   setAddresses: (a: any[]) => void
   addressFormData: {
@@ -59,6 +59,9 @@ interface GlobalContextType {
       success: boolean
     }>
   >
+
+  checkoutFormData: typeof initialCheckoutFormData
+  setCheckoutFormData: React.Dispatch<React.SetStateAction<typeof initialCheckoutFormData>>
 }
 
 export const GlobalContext = createContext<GlobalContextType>(null!)
@@ -70,6 +73,9 @@ export const initialCheckoutFormData = {
   isPaid: false,
   paidAt: new Date(),
   isProcessing: true,
+  shippingRate: 0,
+  success_url: `http://localhost:3000/checkout?status=success`,
+  cancel_url: `http://localhost:3000/checkout?status=cancel`,
 }
 
 export default function GlobalState({
@@ -80,7 +86,7 @@ export default function GlobalState({
   const [showNavModal, setShowNavModal] = useState(false)
   const [showCartModal, setShowCartModal] = useState(false)
 
-  const [cartItems, setCartItems] = useState({
+  const [cartItems, setCartItems] = useState<{ data: Product[]; success: boolean }>({
     data: [],
     success: true,
   })
@@ -113,13 +119,13 @@ export default function GlobalState({
       } else {
         setIsAuthUser(true)
         const localUser = localStorage.getItem('user')
-        if (localUser) {
+      if (localUser) {
           setUser(JSON.parse(localUser))
         } else {
-          try {
+      try {
             const res = await fetch('/api/me', {
               method: 'GET',
-              headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${token}` },
             })
 
             // Check if the response is OK and is JSON
@@ -135,7 +141,7 @@ export default function GlobalState({
             }
 
             const data = await res.json()
-            if (data?.user) {
+        if (data?.user) {
               setUser(data.user)
               localStorage.setItem('user', JSON.stringify(data.user))
             }
@@ -159,7 +165,7 @@ export default function GlobalState({
           } else if (Array.isArray(parsed)) {
             setCartItems({ data: parsed, success: true })
           }
-        } catch (err) {
+      } catch (err) {
           console.error('Lỗi khi parse cartItems:', err)
         }
       }

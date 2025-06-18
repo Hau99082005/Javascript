@@ -1,7 +1,7 @@
 import connectDB from "@/lib/mongodb";
 import Cart from "@/models/cart";
 import { NextResponse } from "next/server";
-import { User } from "@/models/user";
+import User from "@/models/user";
 import mongoose from "mongoose";
 
 export const dynamic = "force-dynamic";

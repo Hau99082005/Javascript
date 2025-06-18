@@ -22,6 +22,7 @@ const cities = [
   'Cần Thơ',
   'Hải Phòng',
   'Biên Hòa',
+  'Quảng Trị',
   'Huế',
   'Nha Trang',
   'Buôn Ma Thuột',

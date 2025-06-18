@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar/page";
 import { AuthProvider } from "@/context/auth";
 import { ToastContainer } from 'react-toastify';
 import { CartProvider } from "@/context/CartContext";
+import React from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
