@@ -11,13 +11,14 @@ interface Banner {
   desc: string;
 }
 
-type Props = {
+interface PageProps {
   params: {
     id: string;
   };
-};
+  searchParams: { [key: string]: string | string[] | undefined };
+}
 
-export default function EditBanner({ params }: Props) {
+export default function EditBannerPage({ params }: PageProps) {
   const router = useRouter();
   const [banner, setBanner] = useState<Banner | null>(null);
   const [loading, setLoading] = useState(true);
