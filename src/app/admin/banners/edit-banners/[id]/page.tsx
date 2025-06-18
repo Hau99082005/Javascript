@@ -11,20 +11,16 @@ interface Banner {
   desc: string;
 }
 
-interface PageProps {
+type Props = {
   params: {
     id: string;
   };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
+};
 
-export default function EditBanner({ params }: PageProps) {
+export default function EditBanner({ params }: Props) {
   const router = useRouter();
-  const [formData, setFormData] = useState<Banner>({
-    _id: "",
-    image: "",
-    desc: "",
-  });
+  const [banner, setBanner] = useState<Banner | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchBanner();
@@ -34,9 +30,11 @@ export default function EditBanner({ params }: PageProps) {
     try {
       const response = await fetch(`/api/banners/${params.id}`);
       const data = await response.json();
-      setFormData(data);
+      setBanner(data);
     } catch (error) {
       console.error("Error fetching Banner:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -44,120 +42,84 @@ export default function EditBanner({ params }: PageProps) {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    if (banner) {
+      setBanner({
+        ...banner,
+        [name]: value,
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!banner) return;
+
     try {
       const response = await fetch(`/api/banners/${params.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData), // Remove redundant String casting
+        body: JSON.stringify(banner),
       });
 
       if (response.ok) {
-        router.push("/admin/banners/all-banners");
-      } else {
-        console.error("Failed to update banner:", await response.json());
+        router.push("/admin/banners");
       }
     } catch (error) {
       console.error("Error updating banner:", error);
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!banner) {
+    return <div>Banner not found</div>;
+  }
+
   return (
-    <div className="flex justify-center items-start p-8">
-      <div className="w-full max-w-2xl bg-white shadow-lg rounded-xl p-8 border">
-        <h1
-          className="text-3xl font-semibold mb-6 text-gray-800"
-          style={{
-            fontFamily: "Lato",
-            fontSize: "25px",
-            fontWeight: "bolder",
-          }}
-        >
-          🖼️ Sửa Banner
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              style={{
-                fontFamily: "Lato",
-                fontSize: "20px",
-                fontWeight: "bolder",
-              }}
-            >
-              Link hình ảnh
-            </label>
-            <Input
-              type="text"
-              name="image"
-              value={formData.image}
-              onChange={handleChange}
-              className="w-full"
-              placeholder="https://example.com/image.jpg"
-              required
-            />
-          </div>
-          <div>
-            <label
-              className="block mb-2 text-sm font-medium text-gray-700"
-              style={{
-                fontFamily: "Lato",
-                fontSize: "20px",
-                fontWeight: "bolder",
-              }}
-            >
-              Mô tả
-            </label>
-            <Textarea
-              name="desc"
-              value={formData.desc}
-              onChange={handleChange}
-              rows={3}
-              className="w-full"
-              placeholder="Mô tả ngắn gọn về banner"
-              required
-            />
-          </div>
-          <div className="flex justify-end gap-4 pt-4">
-            <button
-              type="submit"
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg transition duration-200"
-              style={{
-                border: "none",
-                borderRadius: "5px",
-                fontFamily: "Lato",
-                fontSize: "20px",
-                fontWeight: "bolder",
-              }}
-            >
-              <FaSave /> Cập nhật
-            </button>
-            <button
-              type="button"
-              onClick={() => router.push("/admin/banners/all-banners")}
-              className="flex items-center gap-2 bg-gray-500 hover:bg-gray-600 text-white px-5 py-2 rounded-lg transition duration-200"
-              style={{
-                border: "none",
-                borderRadius: "5px",
-                fontFamily: "Lato",
-                fontSize: "20px",
-                fontWeight: "bolder",
-              }}
-            >
-              <FaTimes /> Hủy
-            </button>
-          </div>
-        </form>
-      </div>
+    <div className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Edit Banner</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block mb-2">Image URL</label>
+          <Input
+            type="text"
+            name="image"
+            value={banner.image}
+            onChange={handleChange}
+            className="w-full"
+          />
+        </div>
+        <div>
+          <label className="block mb-2">Description</label>
+          <Textarea
+            name="desc"
+            value={banner.desc}
+            onChange={handleChange}
+            rows={3}
+          />
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          >
+            <FaSave className="inline mr-2" />
+            Save
+          </button>
+          <button
+            type="button"
+            onClick={() => router.push("/admin/banners")}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+          >
+            <FaTimes className="inline mr-2" />
+            Cancel
+          </button>
+        </div>
+      </form>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import Joi from "joi";
 import { NextResponse } from "next/server";
 import { compare } from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import User from "@/models/user";
+import { User } from "@/models/user";
 import connectDB from "@/lib/mongodb";
 
 const schema = Joi.object({
