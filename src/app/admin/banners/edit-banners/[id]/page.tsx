@@ -11,9 +11,12 @@ interface Banner {
   desc: string;
 }
 
-type PageProps = {
-  params: { id: string };
-};
+interface PageProps {
+  params: {
+    id: string;
+  };
+  searchParams: { [key: string]: string | string[] | undefined };
+}
 
 export default function EditBanner({ params }: PageProps) {
   const router = useRouter();
