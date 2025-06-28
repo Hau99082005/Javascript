@@ -24,7 +24,7 @@ export const FlashSaleSection: React.FC = () => {
       try {
         const res = await fetch("/api/products");
         const data = await res.json();
-        setBooks(data);
+        setBooks(data.products || []);
       } catch (err) {
         console.error("Failed to fetch books:", err);
       } finally {

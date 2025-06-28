@@ -9,10 +9,14 @@ const SuggestedBooks: React.FC = () => {
         const fetchSuggestedbook = async () => {
           try {
             const res = await fetch("/api/products");
+            if (!res.ok) {
+              throw new Error("API error");
+            }
             const data = await res.json();
-            setsuggestedbooks(data);
+            setsuggestedbooks(data.products || []);
           } catch (error) {
             console.error("Failed to fetch suggestedbooks:", error);
+            setsuggestedbooks([]);
           }
         };
     

@@ -1,6 +1,7 @@
 import connectDB from "@/lib/mongodb";
 import AuthUser from "@/middleware/Auth";
 import Cart from "@/models/cart";
+import Product from "@/models/products";
 import Joi from "joi";
 import { NextResponse } from "next/server";
 
@@ -27,16 +28,28 @@ export async function POST(req) {
         const data = await req.json();
         const { productID, userID, quantity } = data;
 
-        const { error } = AddToCart.validate({ userID, productID, quantity });
+       
+        const actualUserID = isAuthUser.userID || isAuthUser._id || userID;
+
+        const { error } = AddToCart.validate({ userID: actualUserID, productID, quantity });
         if (error) {
             return NextResponse.json({
                 success: false,
                 message: error.details[0].message
             }, { status: 400 });
         }
+
+        const product = await Product.findById(productID);
+        if (!product) {
+            return NextResponse.json({
+                success: false,
+                message: "Sản phẩm không tồn tại!"
+            }, { status: 404 });
+        }
+
         const existingCartItem = await Cart.findOne({
             productID: productID,
-            userID: userID
+            userID: actualUserID
         });
 
         if (existingCartItem) {
@@ -46,11 +59,12 @@ export async function POST(req) {
             return NextResponse.json({
                 success: true,
                 message: "Cập nhật số lượng sản phẩm trong giỏ hàng thành công!",
-                cartCount: await Cart.countDocuments({ userID })
+                cartCount: await Cart.countDocuments({ userID: actualUserID })
             });
         }
+
         const saveProductCart = await Cart.create({
-            userID,
+            userID: actualUserID,
             productID,
             quantity
         });
@@ -59,7 +73,7 @@ export async function POST(req) {
             return NextResponse.json({
                 success: true,
                 message: "Sản phẩm đã thêm vào giỏ hàng!",
-                cartCount: await Cart.countDocuments({ userID })
+                cartCount: await Cart.countDocuments({ userID: actualUserID })
             });
         }
 

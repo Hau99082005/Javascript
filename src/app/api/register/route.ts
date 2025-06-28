@@ -1,6 +1,6 @@
 import Joi from "joi";
 import { NextResponse } from "next/server";
-import { User } from "@/models/user";
+import User from "@/models/user";
 import bcrypt from "bcrypt";
 import connectDB from "@/lib/mongodb";
 

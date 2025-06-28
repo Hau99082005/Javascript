@@ -19,10 +19,14 @@ export const BrandHighlightList = () => {
     const fetchPopularProducts = async () => {
       try {
         const res = await fetch("/api/products");
+        if (!res.ok) {
+          throw new Error("API error");
+        }
         const data = await res.json();
-        setProducts(data);
+        setProducts(data.products || []);
       } catch (error) {
         console.error("Failed to fetch products:", error);
+        setProducts([]);
       }
     };
 

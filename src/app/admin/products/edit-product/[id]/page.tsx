@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
@@ -21,8 +21,7 @@ interface Product {
   productcode: string;
 }
 
-export default function EditProduct() {
-  const { productcode } = useParams() as { productcode: string };
+export default function EditProduct({ params }: { params: { id: string } }) {
   const router = useRouter();
 
   const [formData, setFormData] = useState<Product>({
@@ -43,12 +42,12 @@ export default function EditProduct() {
   });
 
   useEffect(() => {
-    if (productcode) fetchProduct();
-  }, [productcode]);
+    if (params.id) fetchProduct();
+  }, [params.id]);
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`/api/products/${productcode}`);
+      const response = await fetch(`/api/products/${params.id}`);
       if (response.status === 404) {
         alert("Sản phẩm không tồn tại hoặc đã bị xóa!");
         router.push("/admin/products/all-products");
@@ -80,7 +79,7 @@ export default function EditProduct() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/products/${productcode}`, {
+      const response = await fetch(`/api/products/${params.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

@@ -12,17 +12,21 @@ const BookRanking = () => {
     const fetchBookRanking = async () => {
       try {
         const res = await fetch("/api/products");
+        if (!res.ok) {
+          throw new Error("API error");
+        }
         const data = await res.json();
-        setBooks(data);
-        setSelectedBook(data[0]);
+        setBooks(data.products || []);
+        setSelectedBook((data.products && data.products[0]) || null);
       } catch (error) {
         console.error("Failed to fetch Books:", error);
+        setBooks([]);
       }
     };
     fetchBookRanking();
   }, []);
 
-  const visibleBooks = showAll ? books : books.slice(0, 5); //Chỉ lấy 7 cuốn đầu khi chưa mở
+  const visibleBooks = showAll ? books : books.slice(0, 5); //Chỉ lấy 5 cuốn đầu khi chưa mở
 
   return (
     <div className="flex flex-col md:flex-row border-t">

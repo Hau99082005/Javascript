@@ -1,12 +1,19 @@
 import { NextResponse } from 'next/server'
 import connectDB from '@/lib/mongodb'
 import Product from '@/models/products'
+import mongoose from 'mongoose';
 
 export async function GET(request: Request) {
   try {
     await connectDB()
-    const products = await Product.find({})
-    return NextResponse.json(products)
+    const { searchParams } = new URL(request.url);
+    const categoryId = searchParams.get('categoryId');
+    let query = {};
+    if (categoryId) {
+      query = { id_category: new mongoose.Types.ObjectId(categoryId) };
+    }
+    const products = await Product.find(query);
+    return NextResponse.json({ products });
   } catch (error) {
     return NextResponse.json(
       { error: 'Internal Server Error' },
@@ -14,8 +21,6 @@ export async function GET(request: Request) {
     )
   }
 }
-
-
 
 export async function POST(request: Request) {
   try {

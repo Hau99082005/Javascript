@@ -11,14 +11,7 @@ interface Banner {
   desc: string;
 }
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-  searchParams: { [key: string]: string | string[] | undefined };
-}
-
-export default function EditBannerPage({ params }: PageProps) {
+export default function Page({ params }: { params: { id: string } }) {
   const router = useRouter();
   const [banner, setBanner] = useState<Banner | null>(null);
   const [loading, setLoading] = useState(true);
