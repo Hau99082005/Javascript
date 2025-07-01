@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'mdb-react-ui-kit/dist/css/mdb.min.css';
+import 'react-toastify/dist/ReactToastify.css';
 import "./globals.css";
 import Footer from "@/components/Footer";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import GlobalState from "@/context/page";
 import Navbar from "@/components/Navbar/page";
 import { AuthProvider } from "@/context/auth";

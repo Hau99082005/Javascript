@@ -5,11 +5,12 @@ import books from "@/models/books";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: any }
 ) {
   try {
     await connectDB();
-    const book = await books.findById(params.id);
+    const realParams = typeof params.then === 'function' ? await params : params;
+    const book = await books.findById(realParams.id);
     if (!book) {
       return NextResponse.json({ error: "Books not found" }, { status: 404 });
     }
@@ -21,12 +22,13 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: any }
 ) {
   try {
     await connectDB();
+    const realParams = typeof params.then === 'function' ? await params : params;
     const body = await request.json();
-    const book = await books.findByIdAndUpdate(params.id, body, {
+    const book = await books.findByIdAndUpdate(realParams.id, body, {
       new: true,
       runValidators: true,
     });
@@ -41,11 +43,12 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: any }
 ) {
   try {
     await connectDB();
-    const book = await books.findByIdAndDelete(params.id);
+    const realParams = typeof params.then === 'function' ? await params : params;
+    const book = await books.findByIdAndDelete(realParams.id);
     if (!book) {
       return NextResponse.json({ error: "books not found" }, { status: 404 });
     }

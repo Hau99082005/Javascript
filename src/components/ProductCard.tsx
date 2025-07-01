@@ -23,6 +23,7 @@ interface Product {
 
 const ProductCard: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
+
   const [showModal, setShowModal] = useState(false);
   const { user } = useContext(GlobalContext);
   const [modalImage, setModalImage] = useState<string>("");
@@ -33,14 +34,10 @@ const ProductCard: React.FC = () => {
     const fetchProduct = async () => {
       try {
         const res = await fetch("/api/products");
-        if (!res.ok) {
-          throw new Error("API error");
-        }
         const data = await res.json();
-        setProducts(data.products || []);
+        setProducts(data);
       } catch (error) {
         console.error("Failed to fetch Product:", error);
-        setProducts([]);
       }
     };
 
@@ -93,6 +90,7 @@ const ProductCard: React.FC = () => {
     <>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 mt-4">
         {products.map((product, index) => (
+         
           <div className="col" key={index}>
             <div
               className="card h-100 shadow-lg border-0 rounded-4 product-card position-relative bg-white"
@@ -241,6 +239,7 @@ const ProductCard: React.FC = () => {
           </div>
         </div>
       )}
+      
     </>
   );
 };

@@ -7,7 +7,7 @@ import connectDB from "@/lib/mongodb";
 
 const schema = Joi.object({
     email: Joi.string().email().required(),
-    password: Joi.string().required(),
+    password: Joi.string().required(),  
 });
 
 export const dynamic = "force-dynamic";

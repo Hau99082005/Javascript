@@ -11,7 +11,7 @@ interface Category {
   desc: string;
 }
 
-export default function EditCategory({ params }: { params: { id: string } }) {
+export default function EditCategoryPage({ params }: { params: any }) {
   const router = useRouter();
   const [formData, setFormData] = useState<Category>({
     _id: "",

@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import jwt from 'jsonwebtoken';
 import connectToDB from '@/database/data';
-import { User } from '@/models/user';
+import User from '@/models/user';
 
 export async function GET(req: NextRequest) {
   try {

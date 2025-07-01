@@ -1,8 +1,16 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect, useRef } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import Image from "next/image";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface Product {
   _id: string;
@@ -15,13 +23,19 @@ interface Product {
   pages: number;
   description: string;
   category: string;
-  subcategory: string;
-  popular: boolean;
-  recommend: boolean;
   productcode: string;
 }
 
-export default function EditProduct({ params }: { params: { id: string } }) {
+interface Category {
+  id: string;
+  name: string;
+  image: string;
+  desc: string;
+  _id: string;
+}
+
+export default function EditProduct() {
+  const { id } = useParams() as { id: string };
   const router = useRouter();
 
   const [formData, setFormData] = useState<Product>({
@@ -35,19 +49,38 @@ export default function EditProduct({ params }: { params: { id: string } }) {
     pages: 0,
     description: "",
     category: "",
-    subcategory: "",
-    popular: false,
-    recommend: false,
     productcode: "",
   });
 
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+
   useEffect(() => {
-    if (params.id) fetchProduct();
-  }, [params.id]);
+    if (id) fetchProduct();
+  }, [id]);
+
+  useEffect(() => {
+    if (formData.productImage) setPreview(formData.productImage);
+  }, [formData.productImage]);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/categories');
+        const data = await res.json();
+        setCategories(data);
+      } catch (error) {
+        console.error('Failed to fetch Categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const fetchProduct = async () => {
     try {
-      const response = await fetch(`/api/products/${params.id}`);
+      const response = await fetch(`/api/products/${id}`);
       if (response.status === 404) {
         alert("Sản phẩm không tồn tại hoặc đã bị xóa!");
         router.push("/admin/products/all-products");
@@ -69,28 +102,69 @@ export default function EditProduct({ params }: { params: { id: string } }) {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
+      [name]: value,
+    }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      category: value,
     }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch(`/api/products/${params.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          productPrice: Number(formData.productPrice),
-          productPriceOld: Number(formData.productPriceOld),
-          quantity: Number(formData.quantity),
-          pages: Number(formData.pages),
-        }),
-      });
-
+      let response;
+      if (imageFile) {
+        const data = new FormData();
+        data.append("productName", formData.productName);
+        data.append("image", imageFile);
+        data.append("productPrice", String(formData.productPrice));
+        data.append("productPriceOld", String(formData.productPriceOld));
+        data.append("quantity", String(formData.quantity));
+        data.append("actor", formData.actor);
+        data.append("pages", String(formData.pages));
+        data.append("description", formData.description);
+        data.append("category", formData.category);
+        response = await fetch(`/api/products/${id}`, {
+          method: "PUT",
+          body: data,
+        });
+      } else {
+        response = await fetch(`/api/products/${id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...formData,
+            productPrice: Number(formData.productPrice),
+            productPriceOld: Number(formData.productPriceOld),
+            quantity: Number(formData.quantity),
+            pages: Number(formData.pages),
+          }),
+        });
+      }
       if (response.ok) {
         router.push("/admin/products/all-products");
       } else {
@@ -123,14 +197,27 @@ export default function EditProduct({ params }: { params: { id: string } }) {
           </div>
 
           <div>
-            <label className="block font-semibold mb-1">Link hình ảnh</label>
-            <Input
-              name="productImage"
-              value={formData.productImage}
-              onChange={handleChange}
-              required
-              placeholder="https://example.com/image.jpg"
-            />
+            <label className="block font-semibold mb-1">Hình ảnh sản phẩm</label>
+            <div
+              className="flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-4 cursor-pointer transition hover:border-blue-400 bg-blue-50"
+              onClick={() => fileInputRef.current?.click()}
+              onDrop={handleDrop}
+              onDragOver={e => e.preventDefault()}
+            >
+              {preview ? (
+                <Image src={preview} alt="Preview" width={200} height={200} className="rounded-xl shadow mb-2 object-cover" style={{maxHeight:200}} />
+              ) : (
+                <span className="text-gray-400 text-lg">Kéo & thả hoặc bấm để chọn ảnh</span>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                name="productImage"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -199,48 +286,18 @@ export default function EditProduct({ params }: { params: { id: string } }) {
             />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block font-semibold mb-1">Danh mục</label>
-              <Input
-                type="text"
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label className="block font-semibold mb-1">Danh mục con</label>
-              <Input
-                type="text"
-                name="subcategory"
-                value={formData.subcategory}
-                onChange={handleChange}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-wrap gap-6 pt-4">
-            <label className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                name="popular"
-                checked={formData.popular}
-                onChange={handleChange}
-                className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <span className="text-sm font-medium">Sản phẩm phổ biến</span>
-            </label>
-            <label className="flex items-center space-x-3">
-              <input
-                type="checkbox"
-                name="recommend"
-                checked={formData.recommend}
-                onChange={handleChange}
-                className="w-5 h-5 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              />
-              <span className="text-sm font-medium">Sản phẩm đề xuất</span>
-            </label>
+          <div>
+            <label className="block font-semibold mb-1">Category</label>
+            <Select value={formData.category} onValueChange={handleCategoryChange}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Chọn danh mục" />
+              </SelectTrigger>
+              <SelectContent>
+                {categories.map((cat) => (
+                  <SelectItem key={cat._id} value={cat._id}>{cat.name}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="flex justify-end gap-4 mt-6">

@@ -100,11 +100,9 @@ export default function AdminAllProduct() {
         <table className="min-w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md">
           <thead>
             <tr className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-900 uppercase text-sm">
-              <th className="px-6 py-3 text-left">id_category</th>
               <th className="px-6 py-3 text-left">Hình ảnh</th>
               <th className="px-6 py-3 text-left">Tên sản phẩm</th>
               <th className="px-6 py-3 text-left">Tác giả</th>
-              <th className="px-6 py-3 text-left">Mã Hàng</th>
               <th className="px-6 py-3 text-left">Giá</th>
               <th className="px-6 py-3 text-left">Số lượng</th>
               <th className="px-6 py-3 text-left">Thời Gian</th>
@@ -118,10 +116,6 @@ export default function AdminAllProduct() {
                 className="border-t border-gray-200 hover:bg-blue-50 transition-colors"
               >
                
-              
-                <td className="px-6 py-4 font-semibold text-gray-800 max-w-ws truncate">
-                  {product.id_category}
-                </td>
                  <td className="px-6 py-4">
                   <div className="relative w-16 h-16">
                     {product.productImage ? (
@@ -153,9 +147,7 @@ export default function AdminAllProduct() {
                 <td className="px-6 py-4 font-semibold text-gray-800 max-w-ws truncate">
                   {product.actor}
                 </td>
-                <td className="px-6 py-4 font-semibold text-gray-800 max-w-xs truncate">
-                  {product.productcode}
-                </td>
+              
                 <td className="px-6 py-4 text-blue-700 font-bold">
                   {product.productPrice.toLocaleString('vi-VN')}đ
                 </td>

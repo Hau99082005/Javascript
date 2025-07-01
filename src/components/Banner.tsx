@@ -13,15 +13,9 @@ const subBanners = [
   { src: "/images/homecreditT6_392x156.webp", alt: "Sub 2" },
 ];
 
-interface Category {
-  _id: string;
-  name: string;
-  image?: string;
-}
-
 const Banner: React.FC = () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [categories, setCategories] = useState<Category[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [banners, setBanners] = useState<any[]>([]);
 
@@ -91,22 +85,22 @@ const Banner: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 text-center">
-        {categories.map((category) => (
+        {categories.map((item, idx) => (
           <Link
-            href={`/categories/${category._id}`}
-            key={category._id}
+            href="/"
+            key={idx}
             className="flex flex-col items-center gap-2 text-decoration-none"
             style={{ fontFamily: "Lato", fontSize: "25px", fontWeight: "bolder" }}
           >
             <Image
-              src={category.image}
-              alt={category.name}
+              src={item.image}
+              alt={item.name}
               width={60}
               height={60}
               className="rounded-full shadow-sm transition-transform hover:scale-105"
               style={{ objectFit: "contain" }}
             />
-            <div className="text-sm font-medium text-gray-700">{category.name}</div>
+            <div className="text-sm font-medium text-gray-700">{item.name}</div>
           </Link>
         ))}
       </div>

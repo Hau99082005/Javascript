@@ -1,3 +1,4 @@
+import { NextResponse } from "next/server";
 import Product from "@/models/products";
 import connectDB from "@/lib/mongodb";
 import ProductDetail from "./ProductDetail";

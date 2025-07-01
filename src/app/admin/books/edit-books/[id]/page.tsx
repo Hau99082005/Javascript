@@ -11,7 +11,7 @@ interface Books {
   name: string;
 }
 
-export default function EditBooks({ params }: { params: { id: string } }) {
+export default function EditBookPage({ params }: { params: any }) {
   const router = useRouter();
   const [formData, setFormData] = useState<Books>({
     image: "",

@@ -1,10 +1,10 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { toast } from 'react-toastify'
-import { v4 as uuidv4 } from 'uuid' // For unique product codes
+import { v4 as uuidv4 } from 'uuid' 
 import {
   Select,
   SelectContent,
@@ -12,13 +12,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import Image from "next/image";
 
 export default function AdminAddNewProduct() {
   const router = useRouter()
   const [formData, setFormData] = useState({
-    id: '',
     productName: '',
-    productImage: '',
     productPrice: '',
     productPriceOld: '',
     quantity: '',
@@ -28,13 +27,17 @@ export default function AdminAddNewProduct() {
     description: '',
     id_category: '',
   })
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   console.log(formData.id_category)
-  // Basic validation for form fields
+
   const validateForm = () => {
     if (
-      !formData.id ||
       !formData.productName ||
-      !formData.productImage ||
+      !imageFile ||
       !formData.id_category
     ) {
       toast.error('Vui lòng điền đầy đủ các trường bắt buộc')
@@ -99,6 +102,27 @@ export default function AdminAddNewProduct() {
     }))
   }
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+      setError(null);
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith("image/")) {
+      setImageFile(file);
+      setPreview(URL.createObjectURL(file));
+      setError(null);
+    } else {
+      setError("Chỉ hỗ trợ file ảnh!");
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!validateForm()) return
@@ -114,24 +138,26 @@ export default function AdminAddNewProduct() {
     }
 
     try {
+      setUploading(true);
+      const data = new FormData();
+      data.append('productName', formData.productName);
+      if (imageFile) {
+        data.append('image', imageFile);
+      }
+      data.append('productPrice', formData.productPrice);
+      data.append('productPriceOld', formData.productPriceOld);
+      data.append('quantity', formData.quantity);
+      data.append('actor', formData.actor);
+      data.append('pages', formData.pages);
+      data.append('date', formData.date);
+      data.append('description', formData.description);
+      data.append('id_category', (selectedCategory as any)._id);
+      data.append('productcode', uuidv4());
       const response = await fetch('/api/products', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          id: String(formData.id),
-          productPrice: Number(formData.productPrice),
-          productPriceOld: Number(formData.productPriceOld) || 0,
-          quantity: Number(formData.quantity),
-          pages: Number(formData.pages) || 0,
-          date: formData.date ? new Date(formData.date) : null,
-
-          // ✅ Thay id_category bằng _id thật
-          id_category: (selectedCategory as any)._id,
-          productcode: uuidv4(),
-        }),
-      })
-
+        body: data,
+      });
+      setUploading(false);
       if (response.ok) {
         toast.success('Thêm sản phẩm thành công')
         router.push('/admin/products/all-products')
@@ -144,6 +170,7 @@ export default function AdminAddNewProduct() {
         )
       }
     } catch (error) {
+      setUploading(false);
       toast.error('Lỗi máy chủ. Vui lòng thử lại sau.')
     }
   }
@@ -156,22 +183,6 @@ export default function AdminAddNewProduct() {
         </h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid md:grid-cols-2 gap-6">
-             <div>
-              <label
-                htmlFor="id"
-                className="block font-medium mb-1 text-blue-600 font-lato text-xl"
-              >
-                id<span className="text-red-600"> *</span>
-              </label>
-              <Input
-                id="id"
-                name="id"
-                value={formData.id}
-                onChange={handleChange}
-                required
-                className="border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
-              />
-            </div>
             <div>
               <label
                 htmlFor="productName"
@@ -193,16 +204,29 @@ export default function AdminAddNewProduct() {
                 htmlFor="productImage"
                 className="block font-medium mb-1 text-blue-600 font-lato text-xl"
               >
-                Link hình ảnh<span className="text-red-600"> *</span>
+                Hình ảnh sản phẩm<span className="text-red-600"> *</span>
               </label>
-              <Input
-                id="productImage"
-                name="productImage"
-                value={formData.productImage}
-                onChange={handleChange}
-                required
-                className="border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-200"
-              />
+              <div
+                className={`flex flex-col items-center justify-center border-2 border-dashed rounded-xl p-6 cursor-pointer transition hover:border-blue-400 bg-blue-50 ${error ? 'border-red-400' : ''}`}
+                onClick={() => fileInputRef.current?.click()}
+                onDrop={handleDrop}
+                onDragOver={e => e.preventDefault()}
+              >
+                {preview ? (
+                  <Image src={preview} alt="Preview" width={200} height={200} className="rounded-xl shadow mb-2 object-cover" style={{maxHeight:200}} />
+                ) : (
+                  <span className="text-gray-400 text-lg">Kéo & thả hoặc bấm để chọn ảnh</span>
+                )}
+                <Input
+                  ref={fileInputRef}
+                  type="file"
+                  name="productImage"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </div>
+              {error && <div className="text-red-500 mt-2 text-sm font-semibold">{error}</div>}
             </div>
           </div>
           <div className="grid md:grid-cols-2 gap-6">
